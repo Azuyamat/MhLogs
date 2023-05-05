@@ -19,7 +19,8 @@
     font-family: "Russo One", serif;
     font-size: 40px;
     box-shadow: 2px 2px 12px black;
-    position: fixed;
+    position: absolute;
+    top:0;
     backdrop-filter: blur(1px);
     border-bottom: var(--accent-color) 2px solid;
 }
@@ -46,6 +47,7 @@
 }
 .highlight{
     color:#4bff89;
+    margin-left: 5px;
 }
 
 
@@ -55,6 +57,14 @@
     background: #1e1e1e;
     margin-bottom: 20px;
     color: #afafaf;
+}
+.serverInfo li{
+    display: flex;
+}
+.icon{
+    transform:translateY(3px);
+    margin-right: 10px;
+    margin-left:10px;
 }
 
 .ctn{
@@ -70,7 +80,7 @@
 }
 .line p{
     background: #131313;
-    width:30px;
+    width:50px;
     text-align: center;
     color:gray;
 }
