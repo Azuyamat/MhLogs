@@ -2,46 +2,37 @@
     --error: red;
     --warning: orange;
     --info: #bdbdbd;
-    --background: #1e1e1e;
-    --darker-background: rgba(47, 47, 47, 0.11);
-    --accent-color: #4bff89;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
 .title{
-    background: var(--darker-background);
+    background: var(--secondary-background);
     width: 100%;
     text-align: center;
     padding:20px 0;
     font-weight: bold;
-    color:var(--accent-color);
+    color:var(--primary);
     font-family: "Russo One", serif;
     font-size: 40px;
-    box-shadow: 2px 2px 12px black;
-    position: absolute;
-    top:0;
-    backdrop-filter: blur(1px);
-    border-bottom: var(--accent-color) 2px solid;
+    border-bottom: var(--primary) 2px solid;
 }
 
 .title:after{
     content: ' logs below';
-    color:gray;
+    color:white;
     font-size: 20px;
-    font-family: Roboto;
 }
 .title:before{
     content: 'Paste your ';
-    color:gray;
+    color:white;
     font-size: 20px;
-    font-family: Roboto;
 }
 .logsArea{
     all:unset;
     background: var(--background);
     padding:20px;
-    color:var(--info);
+    color:var(--primary);
     width:100%;
     height: fit-content;
 }
@@ -54,7 +45,7 @@
 .serverInfo{
     height: fit-content;
     width: 100%;
-    background: #1e1e1e;
+    background: var(--secondary-background);
     margin-bottom: 20px;
     color: #afafaf;
 }
@@ -69,50 +60,39 @@
 
 .ctn{
     border-top: #4bff89 2px solid;
-    background: #1e1e1e;
+    background: var(--secondary-background);
     padding:20px;
 }
 
 
 .line{
-    background: #131313;
+    background: var(--tertiary-background);
     display: flex;
 }
 .line p{
-    background: #131313;
+    background: var(--tertiary-background);
     width:50px;
     text-align: center;
     color:gray;
 }
-.line span{
-}
-.line[data-type="INFO"]{
-    border-left: #2f66d3 solid 6px;
-}
-.line[data-type="WARN"]{
-    border-left: orange solid 6px;
-}
-.line[data-type="ERROR"]{
-    border-left: red solid 6px;
+.num {
+    width:60px;
 }
 
 
 .line[data-type="INFO"]{
     color: #2f66d3;
+    border-left: #2f66d3 solid 6px;
 }
 .line[data-type="WARN"]{
     color:orange;
+    border-left: orange solid 6px;
 }
 .line[data-type="ERROR"]{
     color:red;
+    border-left: red solid 6px;
 }
 
 .moreInfo{
     color:gray;
-}
-.moreInfo:before{
-    content: ' Suggestion: ';
-    color:red;
-    margin-left: 10px;
-    font-weight: bold;
 }

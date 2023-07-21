@@ -3,32 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: rgb(0,0,0);
-  --background-start-rgb: rgb(214, 219, 220);
-  --background-end-rgb: rgb(255, 255, 255);
-  --background-img: url("https://pbs.twimg.com/tweet_video_thumb/EzyPT2nVUAIwKbz.jpg:large");
-  font-family: Roboto;
+  --text: #000000;
+  --background: #eeeeee;
+  --secondary-background: #00031a;
+  --tertiary-background: #051242;
+  --primary: #00B66C;
+  --secondary: #6beeb9;
+  --accent: #cae5ef;
+  font-family: Roboto, serif;
   margin: 0;
   padding: 0;
-  background: #4bff89;
+  background: var(--background);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: rgb(255,255,255);
-    --background-start-rgb: rgb(0,0,0);
-    --background-end-rgb: rgb(0,0,0);
-  }
-}
-
-
-textare{
-  color: white;
-}
-
-*::-webkit-scrollbar{
-  background: #212121;
-}
-*::-webkit-scrollbar-thumb{
-  background:#4bff89;
-}
+/*@media (prefers-color-scheme: dark) {}*/
