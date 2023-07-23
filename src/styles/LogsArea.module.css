@@ -5,39 +5,32 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    padding-top: 100px;
 }
 .title{
-    background: var(--secondary-background);
-    width: 100%;
+    background: rgba(5, 18, 66, 0.08);
+    width: fit-content;
+    position: fixed;
+    left:30px;
+    backdrop-filter: blur(5px);
     text-align: center;
-    padding:20px 0;
+    padding:10px 30px;
     font-weight: bold;
     color:var(--primary);
     font-family: "Russo One", serif;
-    font-size: 40px;
-    border-bottom: var(--primary) 2px solid;
-}
-
-.title:after{
-    content: ' logs below';
-    color:white;
-    font-size: 20px;
-}
-.title:before{
-    content: 'Paste your ';
-    color:white;
-    font-size: 20px;
+    font-size: 30px;
+    border-radius: 0 0 10px 10px;
 }
 .logsArea{
     all:unset;
-    background: var(--background);
+    background: var(--secondary-background);
     padding:20px;
     color:var(--primary);
-    width:100%;
-    height: fit-content;
+    width: 100%;
+    height: 50vh;
 }
 .highlight{
-    color:#4bff89;
+    color:var(--primary);
     margin-left: 5px;
 }
 
@@ -47,36 +40,47 @@
     width: 100%;
     background: var(--secondary-background);
     margin-bottom: 20px;
-    color: #afafaf;
+    color: var(--text);
+    padding: 20px;
 }
 .serverInfo li{
-    display: flex;
 }
 .icon{
-    transform:translateY(3px);
+    color:var(--primary);
+    transform:translateY(7px);
     margin-right: 10px;
     margin-left:10px;
+    font-size: 80%;
 }
 
 .ctn{
-    border-top: #4bff89 2px solid;
-    background: var(--secondary-background);
+    background: var(--background);
     padding:20px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100vw;
 }
 
 
 .line{
     background: var(--tertiary-background);
     display: flex;
+    word-break: break-word;
+    word-wrap: break-word;
+    max-width: 100%;
 }
 .line p{
     background: var(--tertiary-background);
-    width:50px;
-    text-align: center;
-    color:gray;
+    padding: 0 10px;
+    text-align: left;
+    width:fit-content;
+    word-break: keep-all;
+}
+.box{
+    max-width: 100%;
 }
 .num {
-    width:60px;
+    color:gray;
 }
 
 
@@ -96,3 +100,10 @@
 .moreInfo{
     color:gray;
 }
+
+.subtitle{
+    color:var(--primary);
+    font-size: 120%;
+    text-decoration: underline;
+}
+

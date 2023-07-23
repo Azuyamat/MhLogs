@@ -1,10 +1,11 @@
 import styles from "@/styles/LogsArea.module.css"
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {randomInt} from "next/dist/shared/lib/bloom-filter/utils";
 import {AiFillWarning, AiFillInfoCircle, AiOutlineAlignLeft} from "react-icons/ai";
 import {FaServer} from "react-icons/fa";
 
 let construction = [];
+let errConstruction = [];
 let serverVersion = 0;
 let longVer = "";
 
@@ -12,45 +13,52 @@ function LogsArea(props){
 
     const notDefined = "Not defined"
     const [logs, setLogs] = useState(<div>text</div>)
-    const [version, setVersion] = useState(0)
+    const [version, setVersion] = useState("")
     const [errors, setErrors] = useState(0)
     const [lines, setLines] = useState(0)
+    const [errs, setErrs] = useState(<div>None yet.</div>)
 
     function analyze(text){
         construction = [];
+        errConstruction = [];
         setLogs(<div>{text}</div>)
-        console.log("Analyzed")
     }
 
     return (
         <>
+            <h1 className={styles.title}>MHLOGS</h1>
             <div className={styles.wrapper} id={"wrapper"}>
-                    <h1 className={styles.title}>MHLOGS</h1>
+                <div className={styles.ctn}>
+                    <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Paste your logs below</h2>
                     <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
-                        " logs here"} className={styles.logsArea} onKeyDown={(e) => {
-                        if (e.key === 'Enter'){
-                            e.preventDefault()
-                            analyze(e.target.value)
-                        }
-                    }} onPaste={(e) => {
-                        setTimeout(function(){
-                            analyze(e.target.value)
-                        }, 100)
+                        " logs here"} className={styles.logsArea} onInput={(e)=>{
+                        //document.getElementById("pro_btn").style.display = 'inherit'
+                        analyze(document.getElementById("logsArea").value)
                     }} spellCheck={false}/>
-            </div>
-            <div className={styles.ctn}>
-                <div className={styles.serverInfo}>
-                    <ul>
-                        <li><span className={styles.icon} style={{color:"#4bff89"}}><FaServer/></span> Server Version: <span className={styles.highlight} id={"version"}>{version}</span></li>
-                        <li><span className={styles.icon} style={{color:"#4bff89"}}><FaServer/></span> Server Type: <span className={styles.highlight} id={"longVersion"}>Loading...</span></li>
-                        <li><span className={styles.icon} style={{color:"red"}}><AiFillWarning/></span> Errors: <span className={styles.highlight} id={"errors"} style={{color:"red"}}> {errors}</span></li>
-                        <li><span className={styles.icon} style={{color:"orange"}}><AiOutlineAlignLeft/></span> Lines: <span className={styles.highlight} id={"lines"} style={{color:"orange"}}> {lines}</span></li>
-                        <li><span className={styles.icon} style={{color:"#3289a8"}}><AiFillInfoCircle/></span> Website it still in <span className={styles.highlight} id={"errors"}>beta</span></li>
-                        <li><span className={styles.icon} style={{color:"#3289a8"}}><AiFillInfoCircle/></span> Made by <span className={styles.highlight} style={{textDecoration:'underline'}}><a
-                            href="https://azuyamat.com">Azuyamat</a></span></li>
-                    </ul>
                 </div>
-                <Results logs={logs} id={randomInt(0, 999999)}/>
+                <div className={styles.ctn}>
+                    <h2><span className={styles.icon}><FaServer/></span> Server Information</h2>
+                    <div className={styles.serverInfo}>
+                        <ul>
+                            <li>Server Version: <span className={styles.highlight}> {version}</span></li>
+                            <li>Server Type: <span className={styles.highlight}> {longVer.replace("on", "")}</span></li>
+                            <li>Errors: <span style={{color:"red"}}> {errors}</span></li>
+                            <li>Lines: <span style={{color:"orange"}}> {lines}</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div className={styles.ctn}>
+                    <h2><span className={styles.icon}><AiFillWarning/></span> Server Errors</h2>
+                    <div className={styles.errors}>
+                        {errs}
+                    </div>
+                </div>
+                <div className={styles.ctn}>
+                    <h2><span className={styles.icon}><AiFillWarning/></span> {version} {longVer} Minecraft Server</h2>
+                    <div>
+                        <Results logs={logs} id={"jeff"}/>
+                    </div>
+                </div>
             </div>
         </>
 
@@ -59,8 +67,8 @@ function LogsArea(props){
     function Results(props){
         const text = props.logs.props.children
         const split = text.split("\n");
-        setLines((parseInt(split.length)))
         let er = 0;
+        let i = 0;
         for (let s in split){
             const t = split[s]
             const array = t.match(new RegExp("(?<time>^[[]\\d\\d:\\d\\d:\\d\\d])(?<text>.+)", "gm"))
@@ -74,6 +82,10 @@ function LogsArea(props){
                         if (r.groups.infoType != null) type = r.groups.infoType
                     }
                 }
+                let things = {
+                    "ModernPluginLoadingStrategy": "An error is occurring with the plugin mentioned above. Either try to fix it or switch to another plugin",
+                    "Could not pass event": "This means an event in the plugin above is not being registered properly. The plugin might unload due to this. Hence, you won't be able to use it. To resolve this issue, install a more up to date version of the plugin or one that doesn't have the same issue.",
+                }
                 let reason = "No suggested fixes";
                 if (content.includes("Starting minecraft server version")){
                     serverVersion = content.match("Starting minecraft server version (.+)")[1]
@@ -81,24 +93,30 @@ function LogsArea(props){
                 }
                 if (content.includes("This server is running")){
                     longVer = content.match("This server is running (.+)")[1]
-                    document.getElementById("longVersion").innerText = longVer;
+                    //document.getElementById("longVersion").innerText = longVer;
                 }
                 let regex = /(\w+|\d+|\D)([[]\/\d{0,3}.\d{0,3}.\d{0,3}.\d{0,3}:\d{0,7}])/gm
                 content = content.replace(regex, "REDACTED IP")
-                let things = {
-                    "ModernPluginLoadingStrategy": "An error is occurring with the plugin mentioned above. Either try to fix it or switch to another plugin",
-                    "Could not pass event": "This means an event in the plugin above is not being registered properly. The plugin might unload due to this. Hence, you won't be able to use it. To resolve this issue, install a more up to date version of the plugin or one that doesn't have the same issue."
-                }
                 if (type === "ERROR"){
                     er++
                     for (const h in things){
                         if (content.includes(h)) reason = things[h]
                     }
                 }
-                construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s)+1} type={type} time={time} reason={reason}>{content}</Result>)
+                if (document.getElementById("line_"+(parseInt(s)+1)) !== null) continue
+                else {
+                    construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s)+1} text={time} type={type.replace("FATAL", "ERROR")} time={time} reason={reason}>{content}</Result>)
+                    if (type.toLowerCase().replace("FATAL", "error") === "error"){
+                        console.log("ERROR")
+                        errConstruction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s)+1} text={time} type={type.replace("FATAL", "ERROR")} time={time} reason={reason}>{content}</Result>)
+                    }
+                }
             }
+            i=s
         }
+        setLines(i)
         setErrors(er)
+        setErrs(errConstruction)
         return(
             <div id={"construction"}>{construction}</div>
         )
@@ -106,10 +124,11 @@ function LogsArea(props){
 
     function Result(props){
         return (
-            <div className={styles.line} data-type={props.type}>
-                <p>{props.line}</p>
-                <div>
-                    <span className={styles.num}>{props.children}</span>
+            <div className={styles.line} data-type={props.type} id={"line_"+props.line}>
+                <p className={styles.num}>{props.line}</p>
+                <div className={styles.box}>
+                    {props.time}
+                    <span>{props.children}</span>
                     {props.type === "ERROR" ? <div className={styles.moreInfo}>{props.reason}</div> : ""}
                 </div>
             </div>
