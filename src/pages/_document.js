@@ -8,7 +8,7 @@ export default function Document() {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta name="description" content="Utility tool to ease debugging" />
           <meta name="theme-color" content="#4bff89"/>
-          <link rel="icon" href="https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/59/Oak_Log_%28UD%29_JE1.png/revision/latest?cb=20191229175531" />
+          <link rel="icon" href="/static/favicon.ico" />
           <meta property='og:type' content='website'/>
           <meta name="twitter:card" content="summary_large_image"/>
           <meta property="og:image" content="https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e9/Oak_Log_%28UD%29_JE5_BE3.png/revision/latest?cb=20200317191604" />

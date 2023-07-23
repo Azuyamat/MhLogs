@@ -11,7 +11,8 @@
     background: rgba(5, 18, 66, 0.08);
     width: fit-content;
     position: fixed;
-    left:30px;
+    right:30px;
+    z-index: 40;
     backdrop-filter: blur(5px);
     text-align: center;
     padding:10px 30px;
@@ -21,14 +22,18 @@
     font-size: 30px;
     border-radius: 0 0 10px 10px;
 }
+.textAreaCtn{
+    width: 100%;
+}
 .logsArea{
     all:unset;
     background: var(--secondary-background);
-    padding:20px;
     color:var(--primary);
-    width: 100%;
+    width: calc(100% - 40px);
+    padding:20px;
     height: 50vh;
     border-radius: 0 0 10px 10px;
+    white-space: pre-wrap;
 }
 .highlight{
     color:var(--primary);
@@ -58,8 +63,6 @@
 .ctn{
     background: var(--background);
     padding:20px;
-    display: flex;
-    flex-wrap: wrap;
     width: 100vw;
 }
 
@@ -69,7 +72,10 @@
     display: flex;
     word-break: break-word;
     word-wrap: break-word;
-    max-width: 100%;
+    width: 100%;
+    color:var(--text);
+    border-left: var(--text) 6px solid;
+    white-space: pre-wrap;
 }
 .line p{
     background: var(--tertiary-background);
@@ -79,7 +85,8 @@
     word-break: keep-all;
 }
 .box{
-    max-width: 100%;
+    width: 100%;
+    white-space: pre-wrap;
 }
 .num {
     color:gray;
@@ -109,3 +116,13 @@
     text-decoration: underline;
 }
 
+.errors{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.construction{
+    display: flex;
+    flex-wrap: wrap;
+    background: white;
+}

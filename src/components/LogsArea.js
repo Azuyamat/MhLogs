@@ -26,15 +26,19 @@ function LogsArea(props){
 
     return (
         <>
-            <h1 className={styles.title}>MHLOGS</h1>
+            <h1 className={styles.title}><button onClick={e => {
+                document.getElementById("logsArea").scrollIntoView({block: "center", behavior: "smooth"});
+            }}>MHLOGS</button></h1>
             <div className={styles.wrapper} id={"wrapper"}>
                 <div className={styles.ctn}>
                     <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Paste your logs below</h2>
-                    <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
-                        " logs here"} className={styles.logsArea} onInput={(e)=>{
-                        //document.getElementById("pro_btn").style.display = 'inherit'
-                        analyze(document.getElementById("logsArea").value)
-                    }} spellCheck={false}/>
+                    <div className={styles.textAreaCtn}>
+                        <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
+                            " logs here"} className={styles.logsArea} onInput={(e)=>{
+                            //document.getElementById("pro_btn").style.display = 'inherit'
+                            analyze(document.getElementById("logsArea").value)
+                        }} spellCheck={false} autoComplete={"off"}/>
+                    </div>
                 </div>
                 <div className={styles.ctn}>
                     <h2><span className={styles.icon}><FaServer/></span> Server Information</h2>
@@ -69,13 +73,19 @@ function LogsArea(props){
         const split = text.split("\n");
         let er = 0;
         let i = 0;
+        if (text === "text") return
         for (let s in split){
             const t = split[s]
+            if (t === "") continue
+            let time = ""
             const array = t.match(new RegExp("(?<time>^[[]\\d\\d:\\d\\d:\\d\\d])(?<text>.+)", "gm"))
+            if (!array && document.getElementById("line_"+(parseInt(s)+1)) === null){
+                construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s)+1} text={time} type={"INFO"} time={time}>{t}</Result>)
+            }
             for (let a in array){
-                let time = array[a].match(new RegExp("[[]\\d\\d:\\d\\d:\\d\\d]"))[0]
+                time = array[a].match(new RegExp("[[]\\d\\d:\\d\\d:\\d\\d]"))[0]
                 let content = array[a].replace(time, "")
-                const r = content.match(new RegExp("[[](?<type>ServerMain|Server thread)\\/(?<infoType>\\w+)]"))
+                const r = content.match(new RegExp("[[](?<type>.*?)\\/(?<infoType>\\w+)]"))
                 let type = "INFO"
                 if (r != null){
                     if (r.groups != null){
@@ -105,32 +115,43 @@ function LogsArea(props){
                 }
                 if (document.getElementById("line_"+(parseInt(s)+1)) !== null) continue
                 else {
-                    construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s)+1} text={time} type={type.replace("FATAL", "ERROR")} time={time} reason={reason}>{content}</Result>)
+                    construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s)+1} text={time} type={type.replace("FATAL", "ERROR").replace("DEBUG", "INFO").replace("TRACE", "TRACE")} time={time} reason={reason}>{content}</Result>)
                     if (type.toLowerCase().replace("FATAL", "error") === "error"){
-                        console.log("ERROR")
-                        errConstruction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s)+1} text={time} type={type.replace("FATAL", "ERROR")} time={time} reason={reason}>{content}</Result>)
+                        errConstruction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s)+1} text={time} type={type.replace("FATAL", "ERROR")} err={true} time={time} reason={reason}>{content}</Result>)
                     }
                 }
             }
             i=s
         }
-        setLines(i)
+        setLines(parseInt(i)+1)
         setErrors(er)
         setErrs(errConstruction)
+        if (text !== "text") document.title = ""+version+" "+longVer+" Minecraft Server - MHLOGS"
         return(
-            <div id={"construction"}>{construction}</div>
+            <div className={styles.construction}>{construction}</div>
         )
     }
 
     function Result(props){
         return (
-            <div className={styles.line} data-type={props.type} id={"line_"+props.line}>
+            <div className={styles.line} data-type={props.type} id={"line_"+props.line+(props.err ? "_err" : "")}>
                 <p className={styles.num}>{props.line}</p>
-                <div className={styles.box}>
-                    {props.time}
-                    <span>{props.children}</span>
-                    {props.type === "ERROR" ? <div className={styles.moreInfo}>{props.reason}</div> : ""}
-                </div>
+                {props.err ?
+                    <button onClick={(e) => {
+                        document.getElementById("line_"+props.line).scrollIntoView({block: "center", behavior: "smooth"});
+                    }}>
+                        <div className={styles.box}>
+                            {props.time}
+                            <span>{props.children}</span>
+                            {props.type === "ERROR" ? <div className={styles.moreInfo}>{props.reason}</div> : ""}
+                        </div>
+                    </button>
+                :
+                    <div className={styles.box}>
+                        {props.time}
+                        <span>{props.children}</span>
+                        {props.type === "ERROR" ? <div className={styles.moreInfo}>{props.reason}</div> : ""}
+                    </div>}
             </div>
         )
     }
