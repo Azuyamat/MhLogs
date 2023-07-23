@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../NextJS-Azuyamat/.idea/NextJS-Azuyamat.iml" filepath="$PROJECT_DIR$/../NextJS-Azuyamat/.idea/NextJS-Azuyamat.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/ludwig.iml" filepath="$PROJECT_DIR$/.idea/ludwig.iml" />
     </modules>
   </component>

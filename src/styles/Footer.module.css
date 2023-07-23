@@ -1,0 +1,38 @@
+.container{
+    width:100vw;
+    height: fit-content;
+    background-color: rgba(7, 7, 12, 0);
+    font-family: Roboto;
+    padding: 10vh;
+}
+
+.socials{
+    font-family: 'Russo One';
+    font-weight: bold;
+    color:var(--primary);
+    font-size: 230%;
+    width: 100%;
+    text-align: center;
+}
+.list{
+    list-style-type: none;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 30px;
+    color:var(--primary);
+    font-size: 200%;
+    gap:25px;
+}
+
+.desc{
+    color:var(--text);
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.highlight{
+    color: var(--primary);
+}

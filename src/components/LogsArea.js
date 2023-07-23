@@ -16,7 +16,7 @@ function LogsArea(props){
     const [version, setVersion] = useState("")
     const [errors, setErrors] = useState(0)
     const [lines, setLines] = useState(0)
-    const [errs, setErrs] = useState(<div>None yet.</div>)
+    const [errs, setErrs] = useState([<div key={"jeff"}>None yet.</div>])
 
     function analyze(text){
         construction = [];
