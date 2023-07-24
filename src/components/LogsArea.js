@@ -3,6 +3,8 @@ import React, {useState} from 'react';
 import {randomInt} from "next/dist/shared/lib/bloom-filter/utils";
 import {AiFillWarning, AiFillInfoCircle, AiOutlineAlignLeft} from "react-icons/ai";
 import {FaServer} from "react-icons/fa";
+import Toast, {showToast} from "@/components/Toast";
+import Arrow from "@/components/Arrow"
 
 let construction = [];
 let errConstruction = [];
@@ -22,10 +24,12 @@ function LogsArea(props){
         construction = [];
         errConstruction = [];
         setLogs(<div>{text}</div>)
+        showToast("Analyzed log file")
     }
 
     return (
         <>
+            <Arrow/>
             <h1 className={styles.title}><button onClick={e => {
                 document.getElementById("logsArea").scrollIntoView({block: "center", behavior: "smooth"});
             }}>MHLOGS</button></h1>

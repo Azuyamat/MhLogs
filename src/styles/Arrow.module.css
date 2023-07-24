@@ -1,0 +1,13 @@
+.circle{
+    --len:15px;
+
+    background:var(--primary);
+    color:white;
+    position: fixed;
+    bottom: var(--len);
+    right: var(--len);
+    padding: var(--len);
+    font-size: var(--len);
+    border-radius: 100%;
+    z-index: 40;
+}
