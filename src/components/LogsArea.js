@@ -1,10 +1,11 @@
 import styles from "@/styles/LogsArea.module.css"
 import React, {useState} from 'react';
 import {randomInt} from "next/dist/shared/lib/bloom-filter/utils";
-import {AiFillWarning, AiOutlineAlignLeft} from "react-icons/ai";
+import {AiFillWarning, AiOutlineAlignLeft, AiOutlineArrowDown} from "react-icons/ai";
 import {FaServer} from "react-icons/fa";
 import {showToast} from "@/components/Toast";
 import Arrow from "@/components/Arrow"
+import Container from "@/components/Container";
 
 let construction = [];
 let errConstruction = [];
@@ -81,10 +82,13 @@ function LogsArea(props) {
                 </button>
             </h1>
             <div className={styles.wrapper} id={"wrapper"} onDrop={handleDrop}>
-                <div className={styles.ctn}>
+                <Container>
                     <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Upload Log File or Drop It</h2>
                     <div className={styles.customFileInput}>
-                        <label htmlFor="fileInput">Choose File</label>
+                        <label htmlFor="fileInput" className={styles.labelCtn}>
+                            <p>Choose File</p>
+                            <span className={styles.arrow}><AiOutlineArrowDown/></span>
+                        </label>
                         <input
                             type="file"
                             id="fileInput"
@@ -92,10 +96,11 @@ function LogsArea(props) {
                             onChange={handleFileChange}
                         />
                         {selectedFile &&
-                            <span className={styles.selectedFileLabel}>Selected File: {selectedFile.name}</span>}
+                            <span className={styles.selectedFileLabel}>{selectedFile.name}</span>}
+                        <div className={styles.dropAnywhere}>Drop file anywhere</div>
                     </div>
-                </div>
-                <div className={styles.ctn}>
+                </Container>
+                <Container>
                     <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Paste your logs below</h2>
                     <div className={styles.textAreaCtn}>
                         <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
@@ -104,26 +109,30 @@ function LogsArea(props) {
                             analyze(document.getElementById("logsArea").value)
                         }} spellCheck={false} autoComplete={"off"}/>
                     </div>
-                </div>
-                {lineCount !== 1 && <div className={styles.ctn}>
-                    <h2><span className={styles.icon}><FaServer/></span> Server Information</h2>
-                    <div className={styles.serverInfo}>
-                        <ul>
-                            <li>Server Version: <span className={styles.highlight}> {serverVersion}</span></li>
-                            <li>Server Type: <span
-                                className={styles.highlight}> {serverLongVersion.replace("on", "")}</span></li>
-                            <li>Errors: <span style={{color: "red"}}> {errorCount}</span></li>
-                            <li>Lines: <span style={{color: "orange"}}> {lineCount}</span></li>
-                        </ul>
-                    </div>
-                </div>}
-                {errorCount > 0 && <div className={styles.ctn}>
-                    <h2><span className={styles.icon}><AiFillWarning/></span> Server Errors</h2>
-                    <div className={styles.errors}>
-                        {errorConstruction}
-                    </div>
-                </div>}
-                <div className={styles.ctn}>
+                </Container>
+                {lineCount !== 1 &&
+                    <Container>
+                        <h2><span className={styles.icon}><FaServer/></span> Server Information</h2>
+                        <div className={styles.serverInfo}>
+                            <ul>
+                                <li>Server Version: <span className={styles.highlight}> {serverVersion}</span></li>
+                                <li>Server Type: <span
+                                    className={styles.highlight}> {serverLongVersion.replace("on", "")}</span></li>
+                                <li>Errors: <span style={{color: "red"}}> {errorCount}</span></li>
+                                <li>Lines: <span style={{color: "orange"}}> {lineCount}</span></li>
+                            </ul>
+                        </div>
+                    </Container>
+                }
+                {errorCount > 0 &&
+                    <Container>
+                        <h2><span className={styles.icon}><AiFillWarning/></span> Server Errors</h2>
+                        <div className={styles.errors}>
+                            {errorConstruction}
+                        </div>
+                    </Container>
+                }
+                <Container>
                     <h2><span
                         className={styles.icon}><AiFillWarning/></span> {serverInfo.version} {serverInfo.longVer} Minecraft
                         Server</h2>
@@ -138,7 +147,7 @@ function LogsArea(props) {
                                      setErrorConstruction(errConstruction)
                                  }}/>
                     </div>
-                </div>
+                </Container>
             </div>
         </>
 
@@ -154,7 +163,6 @@ function Results(props) {
     if (text === "text") return
     for (let s in split) {
         const t = split[s]
-        if (t === "") continue
         let time = ""
         const array = t.match(new RegExp("(?<time>^[[]\\d\\d:\\d\\d:\\d\\d])(?<text>.+)", "gm"))
         if (!array && document.getElementById("line_" + (parseInt(s) + 1)) === null) {
@@ -217,6 +225,7 @@ function Results(props) {
     if (text !== "text") {
         document.title = "" + serverInfo.version + " " + serverInfo.longVer + " Minecraft Server - MHLOGS"
     }
+    if (serverInfo.lines === 1) return;
     return (
         <div className={styles.construction}>{construction}</div>
     )

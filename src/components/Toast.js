@@ -41,7 +41,7 @@ function Toast({ id, message, duration = 3000, onClose, type }) {
 
 
 const displayedToastIds = [];
-export function showToast(message,type="NORMAL",duration = 3000, id=Date.now().toString()) {
+export function showToast(message,type="NORMAL",duration = 8000, id=Date.now().toString()) {
 
     if (displayedToastIds.includes(id)){
         return;

@@ -31,9 +31,13 @@
     color:var(--primary);
     width: calc(100% - 40px);
     padding:20px;
-    height: 50vh;
+    height: 10vh;
     border-radius: 0 0 10px 10px;
     white-space: pre-wrap;
+}
+.logsArea:focus{
+    height: 50vh;
+    transition: height 0.2s ease-in-out;
 }
 .highlight{
     color:var(--primary);
@@ -56,12 +60,6 @@
     margin-right: 10px;
     margin-left:10px;
     font-size: 80%;
-}
-
-.ctn{
-    background: var(--background);
-    padding:20px;
-    width: 100vw;
 }
 
 
@@ -134,9 +132,9 @@
 }
 
 .customFileInput {
-    display: inline-block;
+    display: flex;
+    gap:10px;
     position: relative;
-    cursor: pointer;
     width: 100%;
     background: var(--secondary-background);
     padding:30px;
@@ -148,14 +146,60 @@
     display: none;
 }
 
-.customFileInput label {
+.labelCtn{
     background-color: var(--primary);
     color: var(--text);
-    padding: 8px 16px;
+    min-width: fit-content;
+    max-width: 50%;
+    display: flex;
     border-radius: 4px;
     cursor: pointer;
 }
+.labelCtn p{
+    padding:10px 20px;
+}
+.labelCtn span{
+    padding:10px 10px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 0 4px 4px 0;
+}
+
+.labelCtn:hover{
+    animation: flash 2s infinite;
+}
+
+@keyframes flash {
+    0%{
+        box-shadow: 2px 2px 12px var(--primary);
+        scale: 1;
+    }
+    50%{
+        box-shadow: 2px 2px 30px var(--primary);
+        scale: 1.1;
+    }
+    100%{
+        box-shadow: 2px 2px 12px var(--primary);
+        scale: 1;
+    }
+}
+
 .selectedFileLabel{
-    color:var(--text);
-    margin-left: 10px;
+    color:var(--primary);
+    background: var(--background);
+    border-radius: 4px;
+    padding: 10px 20px;
+}
+
+.arrow{
+    background: var(--secondary);
+}
+
+.dropAnywhere{
+    background: #d9d9d9;
+    color:var(--primary);
+    width: 100%;
+    text-align: center;
+    padding:10px 0;
+    border-radius: 4px;
 }
