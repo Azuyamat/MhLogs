@@ -50,8 +50,6 @@
     padding: 20px;
     border-radius: 0 0 10px 10px;
 }
-.serverInfo li{
-}
 .icon{
     color:var(--primary);
     transform:translateY(7px);
@@ -125,4 +123,39 @@
     display: flex;
     flex-wrap: wrap;
     background: white;
+}
+
+.basic{
+    width: 100%;
+    background:var(--secondary-background);
+    color:var(--text);
+    padding: 20px;
+    border-radius: 0 0 10px 10px;
+}
+
+.customFileInput {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    width: 100%;
+    background: var(--secondary-background);
+    padding:30px;
+    border-radius: 0 0 10px 10px;
+    z-index: 0;
+}
+
+.customFileInput input[type="file"] {
+    display: none;
+}
+
+.customFileInput label {
+    background-color: var(--primary);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.selectedFileLabel{
+    color:var(--text);
+    margin-left: 10px;
 }

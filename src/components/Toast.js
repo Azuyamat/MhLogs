@@ -4,7 +4,7 @@ import styles from "@/styles/Toast.module.css";
 
 
 
-function Toast({ id, message, duration = 3000, onClose }) {
+function Toast({ id, message, duration = 3000, onClose, type }) {
     const [show, setShow] = useState(true);
 
     useEffect(() => {
@@ -28,7 +28,7 @@ function Toast({ id, message, duration = 3000, onClose }) {
     return (
         <>
             {show && (
-                <div className={styles.toast}>
+                <div className={styles.toast} style={{background:`${type}`}}>
                     <span className={styles.message}>{message}</span>
                     <button className={styles.closeButton} onClick={handleClose}>
                         &times;
@@ -41,9 +41,9 @@ function Toast({ id, message, duration = 3000, onClose }) {
 
 
 const displayedToastIds = [];
-export function showToast(message,id=(Date.now().toString()),duration = 3000) {
+export function showToast(message,type="NORMAL",duration = 3000, id=Date.now().toString()) {
 
-    if (displayedToastIds.includes(id)) {
+    if (displayedToastIds.includes(id)){
         return;
     }
 
@@ -82,6 +82,7 @@ export function showToast(message,id=(Date.now().toString()),duration = 3000) {
             duration={duration}
             onClose={handleClose}
             key={toastId}
+            type={type}
         />,
         toastElement
     );
