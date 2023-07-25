@@ -64,8 +64,8 @@ function LogsArea(props) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const text = e.target.result
-                document.getElementById("logsArea").value = text
                 analyze(text)
+                document.getElementById("logsArea").value = text
             };
             reader.readAsText(file);
             setSelectedFile(file)
@@ -147,6 +147,7 @@ function LogsArea(props) {
                                      setServerVersion(version)
                                      setServerLongVersion(longVer)
                                      setErrorConstruction(errConstruction)
+                                     showToast("Logs analyzed")
                                  }}/>
                     </div>
                 </Container>

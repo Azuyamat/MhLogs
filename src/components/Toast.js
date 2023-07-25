@@ -4,7 +4,7 @@ import styles from "@/styles/Toast.module.css";
 
 
 
-function Toast({ id, message, duration = 3000, onClose, type }) {
+function Toast({ id, message, duration = 8000, onClose, type }) {
     const [show, setShow] = useState(true);
 
     useEffect(() => {
