@@ -49,12 +49,13 @@ export function showToast(message,type="NORMAL",duration = 8000, id=Date.now().t
 
     displayedToastIds.push(id);
 
-    const toastRoot = document.getElementById("toastContainer");
-    if (!toastRoot) {
+    let toastRoot = document.getElementById("toastContainer");
+    if (toastRoot === null) {
         const newToastRoot = document.createElement("div");
         newToastRoot.id = "toastContainer";
         newToastRoot.className = styles.toastContainer;
         document.body.appendChild(newToastRoot);
+        toastRoot = newToastRoot
     }
 
     const handleClose = () => {

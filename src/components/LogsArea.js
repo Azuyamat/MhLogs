@@ -33,10 +33,10 @@ function LogsArea(props) {
         construction = [];
         errConstruction = [];
         resetAnalysis()
-        showToast("Analyzing log file")
         setTimeout(() => {
             setLogs(<div>{text}</div>)
         }, 100)
+        showToast("Analyzing log file")
     }
 
     function resetAnalysis() {
@@ -58,7 +58,6 @@ function LogsArea(props) {
         const file = event.dataTransfer.files[0];
         handleFile(file)
     }
-
     function handleFile(file) {
         if (file) {
             const reader = new FileReader();
