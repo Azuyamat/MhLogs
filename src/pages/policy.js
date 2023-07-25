@@ -33,7 +33,7 @@ export default function Policy() {
                             </li>
                             <li>
                                 <h1><span className={styles.num}>5</span> Third-Party Services:</h1>
-                                <p>Our website does not use any third-party services or integrations. All log file processing and analysis are performed solely within your device's local environment.</p>
+                                <p>Our website does not use any third-party services or integrations. All log file processing and analysis are performed solely within your device{"'"}s local environment.</p>
                             </li>
                             <li>
                                 <h1><span className={styles.num}>6</span> Data Retention:</h1>
