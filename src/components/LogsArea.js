@@ -97,14 +97,16 @@ function LogsArea(props) {
                         />
                         {selectedFile &&
                             <span className={styles.selectedFileLabel}>{selectedFile.name}</span>}
-                        <div className={styles.dropAnywhere}>Drop file anywhere</div>
+                        <div className={styles.dropAnywhere} onClick={(e) => {
+                            document.getElementById("logsArea").scrollIntoView({block:'center', behavior:'smooth'})
+                        }}>Drop file in text area</div>
                     </div>
                 </Container>
                 <Container>
                     <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Paste your logs below</h2>
                     <div className={styles.textAreaCtn}>
                         <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
-                            " logs here"} className={styles.logsArea} onBlur={(e) => {
+                            " logs here or drop file"} className={styles.logsArea} onBlur={(e) => {
                             //document.getElementById("pro_btn").style.display = 'inherit'
                             analyze(document.getElementById("logsArea").value)
                         }} spellCheck={false} autoComplete={"off"}/>
