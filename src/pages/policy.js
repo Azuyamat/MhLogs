@@ -37,7 +37,7 @@ export default function Policy() {
                             </li>
                             <li>
                                 <h1><span className={styles.num}>6</span> Data Retention:</h1>
-                                <p>As we do not collect or store any log file data, we do not retain any information once you leave our website. The log files you upload are immediately processed, and the analyzed log files are provided to you for download.</p>
+                                <p>As we do not collect or store any log file data, we do not retain any information once you leave our website. Your color preference information stored in local storage is only retained as long as you continue to use our website.</p>
                             </li>
                             <li>
                                 <h1><span className={styles.num}>7</span> Children{"'"}s Privacy:</h1>
@@ -46,6 +46,10 @@ export default function Policy() {
                             <li>
                                 <h1><span className={styles.num}>8</span> Changes to this Privacy Policy:</h1>
                                 <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page, and the effective date will be updated accordingly. We encourage you to review this Privacy Policy periodically to stay informed about how we are protecting your information.</p>
+                            </li>
+                            <li>
+                                <h1><span className={styles.num}>9</span> Storage of User Preferences:</h1>
+                                <p>We offer the option for users to select their preferred color scheme to view the website. To facilitate this, we use local storage in your browser to store your color preference. This information is solely used to display the website with your chosen color scheme and is not transmitted to our servers.</p>
                             </li>
                         </ul>
                     </div>

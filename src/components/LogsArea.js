@@ -55,6 +55,7 @@ function LogsArea(props) {
 
     function handleDrop(event) {
         event.preventDefault();
+        hideOverlay()
         const file = event.dataTransfer.files[0];
         handleFile(file)
     }
@@ -69,6 +70,16 @@ function LogsArea(props) {
             reader.readAsText(file);
             setSelectedFile(file)
         }
+    }
+
+    function showOverlay() {
+        const overlay = document.getElementById('overlay');
+        if (overlay) overlay.style.display = 'block';
+    }
+
+    function hideOverlay() {
+        const overlay = document.getElementById('overlay');
+        if (overlay) overlay.style.display = 'none';
     }
 
     return (
@@ -101,7 +112,7 @@ function LogsArea(props) {
                         }}>Drop file in text area</div>
                     </div>
                 </Container>
-                <Container>
+                <Container id={"logsA"}>
                     <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Paste your logs below</h2>
                     <div className={styles.textAreaCtn}>
                         <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +

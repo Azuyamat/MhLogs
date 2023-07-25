@@ -4,12 +4,12 @@
 
 :root {
   --text: white;
-  --background: #010917;
   --secondary-background: rgb(17, 17, 17);
   --background: white;
   --tertiary-background: #051242;
-  --primary: #5774d3;
-  --secondary: #4864c2;
+  --pm: 87, 116, 211;
+  --primary: rgb(30, 144, 255);
+  --secondary: rgba(var(--primary), 0.3);
   --accent: #cae5ef;
 
   font-family: Roboto, serif;
