@@ -174,6 +174,7 @@ function Results(props) {
     let er = 0;
     let i = 0;
     if (text === "text") return
+    if (text === "") return
     for (let s in split) {
         const t = split[s]
         let time = ""
