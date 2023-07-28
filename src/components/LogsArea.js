@@ -146,7 +146,7 @@ function LogsArea(props) {
                 }
                 <Container>
                     <h2><span
-                        className={styles.icon}><AiFillWarning/></span> {serverInfo.version} {serverInfo.longVer} Minecraft
+                        className={styles.icon}><AiFillWarning/></span> {serverVersion} {serverLongVersion} Minecraft
                         Server</h2>
                     {lineCount === 1 && <div className={styles.basic}>Analyzed logs will appear here</div>}
                     <div>
