@@ -2,7 +2,7 @@ import styles from "@/styles/LogsArea.module.css"
 import React, {useEffect, useState} from 'react';
 import {randomInt} from "next/dist/shared/lib/bloom-filter/utils";
 import {AiFillWarning, AiOutlineAlignLeft, AiOutlineArrowDown} from "react-icons/ai";
-import {FaPlay, FaServer, FaShare, FaTrash} from "react-icons/fa";
+import {FaCopy, FaPlay, FaServer, FaShare, FaTrash} from "react-icons/fa";
 import {showToast} from "@/components/Toast";
 import Arrow from "@/components/Arrow"
 import Container from "@/components/Container";
@@ -34,6 +34,7 @@ function LogsArea(props) {
     const [errorConstruction, setErrorConstruction] = useState(<div>None yet</div>)
     const [selectedFile, setSelectedFile] = useState(null);
     const [pluginList, setPluginList] = useState([]);
+    const [shareLink, setShareLink] = useState("");
 
     function analyze(text) {
         construction = [];
@@ -59,6 +60,16 @@ function LogsArea(props) {
         }
         console.log(plugins)
         setPluginList(plugins)
+    }
+
+    function copyToClipboard(text){
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                showToast("Copied text to clipboard")
+            })
+            .catch(error => {
+                console.error('Copy failed:', error);
+            });
     }
 
     function resetAnalysis() {
@@ -139,22 +150,31 @@ function LogsArea(props) {
                 <ul className={styles.list}>
                     <li><button onClick={(e) => {
                         analyze(content === "" ? document.getElementById("logsArea").value : content)
-                    }} className={styles.share}>Analyze logs <span><FaPlay/></span></button></li>
+                    }} className={styles.share} data-color="green">Analyze logs <span><FaPlay/></span></button></li>
                     {(!locked && lineCount > 1) &&
                         <li><button className={styles.share} onClick={async (e) => {
+                            if (e.target.innerText === "Link created"){
+                                showToast("Link is already created")
+                                return;
+                            }
+                            showToast("Creating share link")
                             try {
                                 const response = await fetch('/api/logs', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
-                                    body: JSON.stringify({ content: document.getElementById("logsArea").value }), // Adjust as needed
+                                    body: JSON.stringify({ content: logs.props.children }), // Adjust as needed
                                 });
 
+                                console.log(response)
                                 const responseData = await response.json();
 
+                                console.log(responseData)
+
                                 if (response.ok) {
-                                    window.location.href = 'https://mhlogs.com/log/'+responseData.timestamp;
+                                    e.target.innerText = "Link created"
+                                    setShareLink("https://mhlogs.com/log/"+responseData.timestamp)
                                 } else {
                                     console.log("Error")
                                 }
@@ -170,6 +190,16 @@ function LogsArea(props) {
                         }}>Erase <span><FaTrash/></span></button>
                     </li>
                     }
+                    {(shareLink !== "") &&
+                    <li>
+                        <a href={shareLink} className={styles.share}>Click here to view share link</a>
+                    </li>}
+                    {(shareLink !== "") &&
+                        <li>
+                            <button className={styles.share} onClick={() => {
+                                copyToClipboard(shareLink)
+                            }}>Copy share link<span><FaCopy/></span></button>
+                        </li>}
                 </ul>
                 {lineCount !== 1 &&
                     <Container>

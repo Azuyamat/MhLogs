@@ -4,7 +4,7 @@ import styles from "@/styles/Toast.module.css";
 
 
 
-function Toast({ id, message, duration = 8000, onClose, type }) {
+function Toast({ id, message, duration = 10000, onClose, type }) {
     const [show, setShow] = useState(true);
 
     useEffect(() => {
@@ -41,7 +41,7 @@ function Toast({ id, message, duration = 8000, onClose, type }) {
 
 
 const displayedToastIds = [];
-export function showToast(message,type="NORMAL",duration = 8000, id=Date.now().toString()) {
+export function showToast(message,type="NORMAL",duration = 10000, id=Date.now().toString()) {
 
     if (displayedToastIds.includes(id)){
         return;
@@ -49,16 +49,13 @@ export function showToast(message,type="NORMAL",duration = 8000, id=Date.now().t
 
     displayedToastIds.push(id);
 
-    try{
-        let toastRoot = document.getElementById("toastContainer");
-        if (toastRoot === null) {
-            const newToastRoot = document.createElement("div");
-            newToastRoot.id = "toastContainer";
-            newToastRoot.className = styles.toastContainer;
-            document.body.appendChild(newToastRoot);
-            toastRoot = newToastRoot
-        }
-    } catch(e){
+    let toastRoot = document.getElementById("toastContainer");
+    if (toastRoot === null) {
+        const newToastRoot = document.createElement("div");
+        newToastRoot.id = "toastContainer";
+        newToastRoot.className = styles.toastContainer;
+        document.body.appendChild(newToastRoot);
+        toastRoot = newToastRoot
     }
 
     const handleClose = () => {
@@ -75,23 +72,21 @@ export function showToast(message,type="NORMAL",duration = 8000, id=Date.now().t
         }
     };
 
-    try{
-        const toastId = Date.now();
-        const toastElement = document.createElement("div");
-        toastElement.id = "toast_" + toastId;
-        toastRoot.appendChild(toastElement);
+    const toastId = Date.now();
+    const toastElement = document.createElement("div");
+    toastElement.id = "toast_" + toastId;
+    toastRoot.appendChild(toastElement);
 
-        ReactDOM.render(
-            <Toast
-                message={message}
-                duration={duration}
-                onClose={handleClose}
-                key={toastId}
-                type={type}
-            />,
-            toastElement
-        );
-    } catch(e){}
+    ReactDOM.render(
+        <Toast
+            message={message}
+            duration={duration}
+            onClose={handleClose}
+            key={toastId}
+            type={type}
+        />,
+        toastElement
+    );
 }
 
 export default Toast;
