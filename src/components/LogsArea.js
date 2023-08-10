@@ -150,7 +150,7 @@ function LogsArea(props) {
                 <ul className={styles.list}>
                     <li><button onClick={(e) => {
                         analyze(content === "" ? document.getElementById("logsArea").value : content)
-                    }} className={styles.share} data-color="green">Analyze logs <span><FaPlay/></span></button></li>
+                    }} className={styles.share} data-color="green">Analyze log file <span><FaPlay/></span></button></li>
                     {(!locked && lineCount > 1) &&
                         <li><button className={styles.share} onClick={async (e) => {
                             if (e.target.innerText === "Link created"){

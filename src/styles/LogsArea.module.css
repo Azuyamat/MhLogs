@@ -244,9 +244,7 @@
 
 .share[data-color="red"]{
     background: #ff6161;
-}
-.share[data-color="green"]{
-    background: #0cff34;
+    animation: none;
 }
 
 
