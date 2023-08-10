@@ -190,6 +190,10 @@
     border-radius: 4px;
     padding: 10px 20px;
 }
+.selectedFileLabel:not(:hover){
+    filter: blur(3px);
+    transition: filter 500ms ease-in-out;
+}
 
 .arrow{
     background: var(--secondary);
@@ -202,4 +206,69 @@
     text-align: center;
     padding:10px 0;
     border-radius: 4px;
+}
+
+.plugins{
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.plugins li{
+    background: var(--secondary-background);
+    width: fit-content;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: var(--primary) 2px solid;
+}
+.plugins li:hover{
+    background: var(--primary);
+}
+.share{
+    display: flex;
+    gap: 10px;
+    background: var(--primary);
+    padding:10px 20px;
+    border-radius: 10px;
+    color:var(--text);
+}
+.share span{
+    padding-top: 5px;
+}
+.share:hover{
+    animation: flash 2s ease-in-out infinite;
+    transition: all 2s ease-in-out;
+}
+
+.list{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+}
+
+.share:hover span{
+    animation: rotate 5s infinite;
+}
+
+@keyframes rotate {
+    0%{
+        transform: translateY(0px);
+    }
+    25%{
+        transform: translateY(-2px);
+    }
+    50%{
+        transform: translateY(2px);
+    }
+    75%{
+        transform: translateY(-2px);
+    }
+    100%{
+        transform: translateY(0px);
+    }
+
 }

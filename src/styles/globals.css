@@ -10,7 +10,7 @@
   --pm: 87, 116, 211;
   --primary: rgb(30, 144, 255);
   --secondary: rgba(var(--primary), 0.3);
-  --accent: #cae5ef;
+  --accent: #2d2d2d;
 
   font-family: Roboto, serif;
   margin: 0;
@@ -28,7 +28,7 @@ button{
 h2{
   color:var(--primary);
   position: sticky;
-  top:0;
+  bottom:0;
   font-weight: bold;
   font-size: 20px;
   background: var(--secondary-background);

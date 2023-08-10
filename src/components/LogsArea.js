@@ -1,8 +1,8 @@
 import styles from "@/styles/LogsArea.module.css"
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {randomInt} from "next/dist/shared/lib/bloom-filter/utils";
 import {AiFillWarning, AiOutlineAlignLeft, AiOutlineArrowDown} from "react-icons/ai";
-import {FaServer} from "react-icons/fa";
+import {FaPlay, FaServer, FaShare, FaTrash} from "react-icons/fa";
 import {showToast} from "@/components/Toast";
 import Arrow from "@/components/Arrow"
 import Container from "@/components/Container";
@@ -19,15 +19,21 @@ let serverInfo =
 
 function LogsArea(props) {
 
+    const locked = props.locked ? props.locked : false
+    const content = props.content ? props.content : ""
+
+    console.log("Content: "+content)
+
+
     const [logs, setLogs] = useState(<div>text</div>)
 
     const [errorCount, setErrorCount] = useState(0)
-    const [lineCount, setLineCount] = useState(0)
-    const [serverVersion, setServerVersion] = useState("")
-    const [serverLongVersion, setServerLongVersion] = useState("")
+    const [lineCount, setLineCount] = useState(1)
+    const [serverVersion, setServerVersion] = useState(null)
+    const [serverLongVersion, setServerLongVersion] = useState(null)
     const [errorConstruction, setErrorConstruction] = useState(<div>None yet</div>)
     const [selectedFile, setSelectedFile] = useState(null);
-
+    const [pluginList, setPluginList] = useState([]);
 
     function analyze(text) {
         construction = [];
@@ -37,15 +43,32 @@ function LogsArea(props) {
             setLogs(<div>{text}</div>)
         }, 100)
         showToast("Analyzing log file")
+
+        const regex = /\[Server thread\/INFO]: \[([^\]]+)] Loading server plugin (\S+)/g;
+        const plugins = [];
+        let matches;
+        let lineNumber = 1;
+
+        while ((matches = regex.exec(text)) !== null) {
+            const plugin = {
+                name: matches[2],
+                line: lineNumber
+            }
+            plugins.push(plugin);
+            lineNumber++
+        }
+        console.log(plugins)
+        setPluginList(plugins)
     }
 
     function resetAnalysis() {
         setErrorCount(0)
-        setLineCount(0)
+        setLineCount(1)
         setServerVersion("")
         setServerLongVersion("")
         setErrorConstruction(<div>None yet</div>)
         setLogs(<div>text</div>)
+        setPluginList([])
     }
 
     function handleFileChange(event) {
@@ -55,7 +78,6 @@ function LogsArea(props) {
 
     function handleDrop(event) {
         event.preventDefault();
-        hideOverlay()
         const file = event.dataTransfer.files[0];
         handleFile(file)
     }
@@ -72,16 +94,6 @@ function LogsArea(props) {
         }
     }
 
-    function showOverlay() {
-        const overlay = document.getElementById('overlay');
-        if (overlay) overlay.style.display = 'block';
-    }
-
-    function hideOverlay() {
-        const overlay = document.getElementById('overlay');
-        if (overlay) overlay.style.display = 'none';
-    }
-
     return (
         <>
             <Arrow/>
@@ -92,36 +104,73 @@ function LogsArea(props) {
                 </button>
             </h1>
             <div className={styles.wrapper} id={"wrapper"} onDrop={handleDrop}>
-                <Container>
-                    <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Upload Log File or Drop It</h2>
-                    <div className={styles.customFileInput}>
-                        <label htmlFor="fileInput" className={styles.labelCtn}>
-                            <p>Choose File</p>
-                            <span className={styles.arrow}><AiOutlineArrowDown/></span>
-                        </label>
-                        <input
-                            type="file"
-                            id="fileInput"
-                            accept=".log, .txt"
-                            onChange={handleFileChange}
-                        />
-                        {selectedFile &&
-                            <span className={styles.selectedFileLabel}>{selectedFile.name}</span>}
-                        <div className={styles.dropAnywhere} onClick={(e) => {
-                            document.getElementById("logsArea").scrollIntoView({block:'center', behavior:'smooth'})
-                        }}>Drop file in text area</div>
-                    </div>
-                </Container>
+                {!locked &&
+                    <Container>
+                        <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Upload Log File or Drop It</h2>
+                        <div className={styles.customFileInput}>
+                            <label htmlFor="fileInput" className={styles.labelCtn}>
+                                <p>Choose File</p>
+                                <span className={styles.arrow}><AiOutlineArrowDown/></span>
+                            </label>
+                            <input
+                                type="file"
+                                id="fileInput"
+                                accept=".log, .txt"
+                                onChange={handleFileChange}
+                            />
+                            {selectedFile &&
+                                <span className={styles.selectedFileLabel}>{selectedFile.name}</span>}
+                            {!selectedFile &&
+                                <div className={styles.dropAnywhere} onClick={(e) => {
+                                    document.getElementById("logsArea").scrollIntoView({block:'center', behavior:'smooth'})
+                                }}>Drop file in text area</div>}
+                        </div>
+                    </Container>}
                 <Container id={"logsA"}>
-                    <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Paste your logs below</h2>
+                    {locked ? <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Logs</h2> : <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Paste your logs below</h2>}
                     <div className={styles.textAreaCtn}>
                         <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
                             " logs here or drop file"} className={styles.logsArea} onBlur={(e) => {
                             //document.getElementById("pro_btn").style.display = 'inherit'
                             analyze(document.getElementById("logsArea").value)
-                        }} spellCheck={false} autoComplete={"off"}/>
+                        }} spellCheck={false} autoComplete={"off"} defaultValue={content} disabled={locked}/>
                     </div>
                 </Container>
+                <ul className={styles.list}>
+                    <li><button onClick={(e) => {
+                        analyze(content === "" ? document.getElementById("logsArea").value : content)
+                    }} className={styles.share}>Analyze logs <span><FaPlay/></span></button></li>
+                    {(!locked && lineCount > 1) &&
+                        <li><button className={styles.share} onClick={async (e) => {
+                            try {
+                                const response = await fetch('/api/logs', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ content: document.getElementById("logsArea").value }), // Adjust as needed
+                                });
+
+                                const responseData = await response.json();
+
+                                if (response.ok) {
+                                    window.location.href = 'https://mhlogs.com/log/'+responseData.timestamp;
+                                } else {
+                                    console.log("Error")
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                document.getElementById('response').textContent = 'An error occurred.';
+                            }
+                        }}>Share Logs <span><FaShare/></span></button></li>}
+                    {(lineCount !== 1 && !locked) &&
+                    <li>
+                        <button className={styles.share} data-color={'red'} onClick={() => {
+                            resetAnalysis()
+                        }}>Erase <span><FaTrash/></span></button>
+                    </li>
+                    }
+                </ul>
                 {lineCount !== 1 &&
                     <Container>
                         <h2><span className={styles.icon}><FaServer/></span> Server Information</h2>
@@ -129,9 +178,17 @@ function LogsArea(props) {
                             <ul>
                                 <li>Server Version: <span className={styles.highlight}> {serverVersion}</span></li>
                                 <li>Server Type: <span
-                                    className={styles.highlight}> {serverLongVersion.replace("on", "")}</span></li>
+                                    className={styles.highlight}> {serverLongVersion}</span></li>
                                 <li>Errors: <span style={{color: "red"}}> {errorCount}</span></li>
                                 <li>Lines: <span style={{color: "orange"}}> {lineCount}</span></li>
+                                {pluginList.length > 0 &&
+                                    <li>Plugins ({pluginList.length}):</li>
+                                }
+                                <ul className={styles.plugins}>
+                                    {pluginList.sort().map((plugin, index) => (
+                                        <li key={index}>{plugin.name}</li>
+                                    ))}
+                                </ul>
                             </ul>
                         </div>
                     </Container>
@@ -145,9 +202,10 @@ function LogsArea(props) {
                     </Container>
                 }
                 <Container>
-                    <h2><span
-                        className={styles.icon}><AiFillWarning/></span> {serverVersion} {serverLongVersion} Minecraft
-                        Server</h2>
+                    <h2>
+                        <span className={styles.icon}><AiFillWarning/></span>
+                        {serverInfo.version} {serverInfo.longVer} Minecraft Server
+                    </h2>
                     {lineCount === 1 && <div className={styles.basic}>Analyzed logs will appear here</div>}
                     <div>
                         <Results logs={logs} id={"jeff"}
@@ -171,17 +229,21 @@ function LogsArea(props) {
 function Results(props) {
     const text = props.logs.props.children
     const split = text.split("\n");
+
     let er = 0;
     let i = 0;
     if (text === "text") return
-    if (text === "") return
     for (let s in split) {
         const t = split[s]
         let time = ""
         const array = t.match(new RegExp("(?<time>^[[]\\d\\d:\\d\\d:\\d\\d])(?<text>.+)", "gm"))
-        if (!array && document.getElementById("line_" + (parseInt(s) + 1)) === null) {
-            construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time} type={"INFO"}
-                                      time={time}>{t}</Result>)
+        try{
+            if (!array && document.getElementById("line_" + (parseInt(s) + 1)) === null) {
+                construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time} type={"INFO"}
+                                          time={time}>{t}</Result>)
+            }
+        } catch (e){
+            continue
         }
         for (let a in array) {
             time = array[a].match(new RegExp("[[]\\d\\d:\\d\\d:\\d\\d]"))[0]
@@ -213,16 +275,21 @@ function Results(props) {
                     if (content.includes(h)) reason = things[h]
                 }
             }
-            if (document.getElementById("line_" + (parseInt(s) + 1)) !== null) continue
-            else {
-                construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time}
-                                          type={type.replace("FATAL", "ERROR").replace("DEBUG", "INFO").replace("TRACE", "TRACE")}
-                                          time={time} reason={reason}>{content}</Result>)
-                if (type.toLowerCase().replace("FATAL", "error") === "error") {
-                    errConstruction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time}
-                                                 type={type.replace("FATAL", "ERROR")} err={true} time={time}
-                                                 reason={reason}>{content}</Result>)
+            try{
+                if (document.getElementById("line_" + (parseInt(s) + 1)) !== null) continue;
+                else {
+                    construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time}
+                                              type={type.replace("FATAL", "ERROR").replace("DEBUG", "INFO").replace("TRACE", "TRACE")}
+                                              time={time} reason={reason}>{content}</Result>)
+                    if (type.toLowerCase().replace("FATAL", "error") === "error") {
+                        errConstruction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time}
+                                                     type={type.replace("FATAL", "ERROR")} err={true} time={time}
+                                                     reason={reason}>{content}</Result>)
+                    }
                 }
+            }
+            catch(e){
+                return e;
             }
         }
         i = s
@@ -236,12 +303,20 @@ function Results(props) {
         longVer: serverInfo.longVer,
         errConstruction: errConstruction
     });
-    if (text !== "text") {
-        document.title = "" + serverInfo.version + " " + serverInfo.longVer + " Minecraft Server - MHLOGS"
-    }
+    try{
+        if (text !== "text") {
+            document.title = "" + serverInfo.version + " " + serverInfo.longVer + " Minecraft Server - MHLOGS"
+        }
+    }catch(e){}
     if (serverInfo.lines === 1) return;
+    const ce = construction.map((result, _) => {
+        if (React.isValidElement(result)) {
+            return result;
+        }
+        return null;
+    });
     return (
-        <div className={styles.construction}>{construction}</div>
+        <div className={styles.construction}>{ce}</div>
     )
 }
 

@@ -49,13 +49,16 @@ export function showToast(message,type="NORMAL",duration = 8000, id=Date.now().t
 
     displayedToastIds.push(id);
 
-    let toastRoot = document.getElementById("toastContainer");
-    if (toastRoot === null) {
-        const newToastRoot = document.createElement("div");
-        newToastRoot.id = "toastContainer";
-        newToastRoot.className = styles.toastContainer;
-        document.body.appendChild(newToastRoot);
-        toastRoot = newToastRoot
+    try{
+        let toastRoot = document.getElementById("toastContainer");
+        if (toastRoot === null) {
+            const newToastRoot = document.createElement("div");
+            newToastRoot.id = "toastContainer";
+            newToastRoot.className = styles.toastContainer;
+            document.body.appendChild(newToastRoot);
+            toastRoot = newToastRoot
+        }
+    } catch(e){
     }
 
     const handleClose = () => {
@@ -72,21 +75,23 @@ export function showToast(message,type="NORMAL",duration = 8000, id=Date.now().t
         }
     };
 
-    const toastId = Date.now();
-    const toastElement = document.createElement("div");
-    toastElement.id = "toast_" + toastId;
-    toastRoot.appendChild(toastElement);
+    try{
+        const toastId = Date.now();
+        const toastElement = document.createElement("div");
+        toastElement.id = "toast_" + toastId;
+        toastRoot.appendChild(toastElement);
 
-    ReactDOM.render(
-        <Toast
-            message={message}
-            duration={duration}
-            onClose={handleClose}
-            key={toastId}
-            type={type}
-        />,
-        toastElement
-    );
+        ReactDOM.render(
+            <Toast
+                message={message}
+                duration={duration}
+                onClose={handleClose}
+                key={toastId}
+                type={type}
+            />,
+            toastElement
+        );
+    } catch(e){}
 }
 
 export default Toast;
