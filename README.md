@@ -1,38 +1,28 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Visit the website here [https://mhlogs.com](https://mhlogs.com)
 
-## Getting Started
+### Purpose:
+The website was created with the sole purpose of easing the debugging of Minecraft dedicated 
+servers. It allows for users to paste, upload or simply drop in log or txt files and gain useful 
+output in order to fix issues or analyze logs more closely.
 
-First, run the development server:
+### Features:
+- Server information such as server version, server type, error count and line count
+- Server errors with easy UI to jump straight to the error's location
+- Enhanced server logs with type highlighting and IP masking
+- Sharing ability to gain aid from other peers
+- Ability to choose the color to view the website from
+- More to come...
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+### Who made this?
+I am [Azuyamat](https://azuyamat.com), I dedicate most of my free time to coding. Specifically, 
+web oriented projects. My latest being MHLogs, one of my most complicated so far. Although age 
+restricts me from pursuing a career in programming at the moment, I wish to study in this field 
+and aspire the role of a FullStack Developer in a well-developed company.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### How was this coded?
+This website was made using [NextJS](https://nextjs.org) and [Vercel](https://vercel.com) with 
+the help of [MongoDB](https://mongodb.com) as a storage solution. Most of the core of the 
+project is run using JavaScript and Regular expression matching.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/logs.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Privacy Policy
+You can view the privacy policy here. [Privacy Policy](https://mhlogs.com/policy)

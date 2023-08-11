@@ -7,21 +7,6 @@
     justify-content: center;
     padding-top: 100px;
 }
-.title{
-    background: rgba(5, 18, 66, 0.08);
-    width: fit-content;
-    position: fixed;
-    right:30px;
-    z-index: 40;
-    backdrop-filter: blur(5px);
-    text-align: center;
-    padding:10px 30px;
-    font-weight: bold;
-    color:var(--primary);
-    font-family: "Russo One", serif;
-    font-size: 30px;
-    border-radius: 0 0 10px 10px;
-}
 .textAreaCtn{
     width: 100%;
 }
