@@ -1,0 +1,105 @@
+.wrapper{
+    position: fixed;
+    z-index: 120;
+    height: 100vh;
+    width: 100vw;
+    backdrop-filter: blur(3px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.47), var(--primary));
+}
+
+.container{
+    min-width: 300px;
+    border-radius: 10px;
+    background: var(--secondary-background);
+    padding: 20px;
+    margin: 30px;
+
+    border: 2px solid var(--primary);
+    box-shadow: 2px 2px 12px black;
+
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+}
+.username:before{
+    content: "@";
+}
+
+.warning{
+    padding: 10px 20px;
+    color:var(--text)
+}
+
+.shareCtn{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 20px;
+}
+.shareCtn button{
+    background: var(--primary);
+    width: 100%;
+    color: var(--text);
+    border: 2px solid var(--primary);
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.shareCtn button:hover{
+    box-shadow: 2px 2px 12px var(--primary);
+    transition: 500ms ease-in-out all;
+}
+
+.icon{
+    padding-top: 4px;
+}
+
+.highlight{
+    color:var(--primary);
+}
+
+.linkCtn{
+    margin:30px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+.link{
+    all:unset;
+    color: var(--text);
+    text-align: center;
+    text-decoration: underline;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.copy{
+    background: var(--primary);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+.close{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 40px;
+    color:var(--text);
+}
+.close:hover{
+    color:var(--primary)
+}

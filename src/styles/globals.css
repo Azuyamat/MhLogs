@@ -20,6 +20,26 @@
 
 /*@media (prefers-color-scheme: dark) {}*/
 
+body{
+  animation: g 5s ease infinite;
+  animation-timing-function: linear;
+  background: #2d2d2d;
+  min-height:100vh;
+  max-height: 100%;
+}
+
+@keyframes g {
+  0% {
+    background-size: 400% 400%;
+  }
+  50% {
+    background-size: 1800% 400%;
+  }
+  100% {
+    background-size: 400% 400%;
+  }
+}
+
 button{
   all:unset;
   cursor: pointer;
@@ -64,7 +84,7 @@ a{
   width: fit-content;
   position: fixed;
   right:30px;
-  z-index: 40;
+  z-index: 170;
   backdrop-filter: blur(5px);
   text-align: center;
   padding:10px 30px;
@@ -73,7 +93,14 @@ a{
   font-family: "Russo One", serif;
   font-size: 30px;
   border-radius: 0 0 10px 10px;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .title a{
   text-decoration: none;
+}
+.title span{
+  padding-top: 4px;
 }

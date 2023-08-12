@@ -19,6 +19,7 @@
     height: 10vh;
     border-radius: 0 0 10px 10px;
     white-space: pre-wrap;
+    font-family: Consolas, serif;
 }
 .logsArea:focus{
     height: 50vh;
@@ -57,6 +58,7 @@
     color:var(--text);
     border-left: var(--text) 6px solid;
     white-space: pre-wrap;
+    font-family: Consolas, serif;
 }
 .line p{
     background: var(--tertiary-background);
@@ -105,7 +107,6 @@
 .construction{
     display: flex;
     flex-wrap: wrap;
-    background: white;
 }
 
 .basic{

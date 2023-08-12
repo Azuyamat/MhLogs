@@ -1,0 +1,28 @@
+.container{
+    border: 2px solid var(--primary);
+    background: var(--secondary-background);
+    min-width: 300px;
+    border-radius: 10px;
+    padding: 10px 20px;
+
+    display: flex;
+    flex-direction: row;
+    gap:30px
+}
+
+.pfp{
+    height: 100%;
+    width: fit-content;
+    border-radius: 50%;
+    overflow: hidden;
+    background: white;
+}
+
+.information{
+    display: flex;
+    flex-direction: column;
+    color: var(--text);
+}
+.fieldLabel{
+    font-weight: bold;
+}

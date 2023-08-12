@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from '@/styles/Color.module.css';
+import styles from '@/styles/components/Color.module.css';
 import {AiOutlineBgColors} from "react-icons/ai";
 import {showToast} from "@/components/Toast";
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
-import styles from "@/styles/Arrow.module.css";
+import styles from "@/styles/components/Arrow.module.css";
 import {FaPlus} from "react-icons/fa";
 
 function Arrow() {

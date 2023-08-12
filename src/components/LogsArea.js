@@ -2,7 +2,7 @@
 //Description: This file is the core of the website. Bringing the multiple information containers and input areas.
 
 
-import styles from "@/styles/LogsArea.module.css"
+import styles from "@/styles/components/LogsArea.module.css"
 import React, {useState} from 'react';
 import {randomInt} from "next/dist/shared/lib/bloom-filter/utils";
 import {AiFillWarning, AiOutlineAlignLeft, AiOutlineArrowDown} from "react-icons/ai";
@@ -10,6 +10,9 @@ import {FaCopy, FaPlay, FaServer, FaShare, FaTrash} from "react-icons/fa";
 import {showToast} from "@/components/Toast";
 import Arrow from "@/components/Arrow"
 import Container from "@/components/Container";
+import { useUser } from '@clerk/nextjs'
+import Share from "@/components/Share";
+import Link from "next/link";
 
 // Small disclaimer:
 // The file is quite bulky and could probably be seperated a tad bit better within numerous other components. The reason it is all handled in one file (or a few more) is to guide its simplicity
@@ -26,10 +29,10 @@ let serverInfo =
 
 function LogsArea(props) {
 
-    const locked = props.locked ? props.locked : false
-    const content = props.content ? props.content : ""
+    const { isLoaded, isSignedIn, user } = useUser()
 
-    const [logs, setLogs] = useState(<div>text</div>)
+
+    const [logs, setLogs] = useState(<div> </div>)
     const [errorCount, setErrorCount] = useState(0)
     const [lineCount, setLineCount] = useState(1)
     const [serverVersion, setServerVersion] = useState(null)
@@ -38,6 +41,17 @@ function LogsArea(props) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [pluginList, setPluginList] = useState([]);
     const [shareLink, setShareLink] = useState("");
+    const [shareShown, setShareShown] = useState(false);
+
+    const locked = props.locked ? props.locked : false
+    let content = props.content ? props.content : logs.props.children
+    const sharedBy = props.sharedBy
+
+    if (!isLoaded){
+        return (
+            <div>Not loaded.</div>
+        )
+    }
 
     //Analyze server logs or (see below) reset the analysis
     function analyze(text) {
@@ -62,10 +76,9 @@ function LogsArea(props) {
             plugins.push(plugin);
             lineNumber++
         }
-        console.log(plugins)
         setPluginList(plugins)
     }
-    function resetAnalysis() {
+    function resetAnalysis(withTextArea = false) {
         setErrorCount(0)
         setLineCount(1)
         setServerVersion("")
@@ -73,18 +86,10 @@ function LogsArea(props) {
         setErrorConstruction(<div>None yet</div>)
         setLogs(<div>text</div>)
         setPluginList([])
+        setShareLink("")
+        if (withTextArea) document.getElementById("logsArea").value = ""
     }
 
-    //Copy to clipboard function
-    function copyToClipboard(text){
-        navigator.clipboard.writeText(text)
-            .then(() => {
-                showToast("Copied text to clipboard")
-            })
-            .catch(error => {
-                console.error('Copy failed:', error);
-            });
-    }
 
     //File drop/upload handlers
     function handleFileChange(event) {
@@ -113,10 +118,26 @@ function LogsArea(props) {
     return (
         <>
             <Arrow/>
-
+            {shareShown &&
+                <Share
+                    logs={logs.props.children}
+                    onClose={() => setShareShown(false)}
+                    createShareLink={(link) => setShareLink(link)}
+                />}
 
             <div className={styles.wrapper} id={"wrapper"} onDrop={handleDrop}>
 
+                {/*Shared by area*/}
+                {locked &&
+                    <Container>
+                        <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> These logs have been shared</h2>
+                        <div className={styles.serverInfo}>
+                            <ul>
+                                <li>Shared by: <span className={styles.highlight}>@{sharedBy} ({props.userId})</span></li>
+                            </ul>
+                        </div>
+                    </Container>
+                }
 
                 {/*Upload file area*/}
                 {!locked &&
@@ -160,42 +181,14 @@ function LogsArea(props) {
                         analyze(content === "" ? document.getElementById("logsArea").value : content)
                     }} className={styles.share} data-color="green">Analyze log file <span><FaPlay/></span></button></li>
                     {(!locked && lineCount > 1) &&
-                        <li><button className={styles.share} onClick={async (e) => {
-                            if (e.target.innerText === "Link created"){
-                                showToast("Link is already created")
-                                return;
-                            }
-                            showToast("Creating share link")
-                            try {
-                                const response = await fetch('/api/logs', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({ content: logs.props.children }), // Adjust as needed
-                                });
-
-                                console.log(response)
-                                const responseData = await response.json();
-
-                                console.log(responseData)
-
-                                if (response.ok) {
-                                    e.target.innerText = "Link created"
-                                    setShareLink("https://mhlogs.com/log/"+responseData.timestamp)
-                                } else {
-                                    console.log("Error")
-                                }
-                            } catch (error) {
-                                console.error('Error:', error);
-                                document.getElementById('response').textContent = 'An error occurred.';
-                            }
+                        <li><button className={styles.share} onClick={() => {
+                            setShareShown(true)
                         }}>Share Logs <span><FaShare/></span></button></li>}
                     {(lineCount !== 1 && !locked) &&
                     <li>
                         <button className={styles.share} data-color={'red'} onClick={() => {
-                            resetAnalysis()
-                        }}>Erase <span><FaTrash/></span></button>
+                            resetAnalysis(true)
+                        }}>Reset <span><FaTrash/></span></button>
                     </li>
                     }
                     {(shareLink !== "") &&
@@ -208,6 +201,36 @@ function LogsArea(props) {
                                 copyToClipboard(shareLink)
                             }}>Copy share link<span><FaCopy/></span></button>
                         </li>}
+                    {(user?.id === props.userId) &&
+                        <li>
+                            <button
+                                className={styles.share}
+                                data-color={'red'}
+                                onClick={async () => {
+                                    try {
+                                        console.log("Timestamp: "+props.timestamp)
+                                        const response = await fetch(`/api/logs?timestamp=${props.timestamp}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            }
+                                        });
+
+                                        if (response.ok) {
+                                            console.log('Log deleted successfully');
+                                            resetAnalysis(true)
+                                        } else {
+                                            console.error('Error deleting log:', response.statusText);
+                                        }
+                                    } catch (error) {
+                                        console.error('Error deleting log:', error);
+                                    }
+                                }}
+                            >
+                                Delete share<span><FaTrash/></span>
+                            </button>
+                        </li>
+                    }
                 </ul>
 
                 {/*Server information container*/}
@@ -433,6 +456,17 @@ function Result(props) {
 
         </div>
     )
+}
+
+//Copy to clipboard function
+export function copyToClipboard(text){
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            showToast("Copied text to clipboard")
+        })
+        .catch(error => {
+            console.error('Copy failed:', error);
+        });
 }
 
 export default LogsArea

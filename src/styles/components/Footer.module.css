@@ -27,7 +27,7 @@
 }
 
 .desc{
-    color:black;
+    color:var(--text);
     width: 100%;
     text-align: center;
     margin-top: 30px;

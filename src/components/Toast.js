@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import styles from "@/styles/Toast.module.css";
+import styles from "@/styles/components/Toast.module.css";
 
 
 
