@@ -1,7 +1,7 @@
 import styles from "@/styles/components/Loading.module.css"
 import {useEffect, useState} from "react";
 
-const Loading = () => {
+const Loading = ({loading}) => {
     const [loadingText, setLoadingText] = useState("The loading part is boring");
 
     useEffect(() => {
@@ -16,10 +16,12 @@ const Loading = () => {
 
         return () => clearInterval(interval);
     }, []);
-    return (
-        <div className={styles.wrapper}>
-            <p className={styles.typingText}>{loadingText}</p>
-        </div>
-    )
+    if (loading) {
+        return (
+            <div className={styles.wrapper}>
+                <p className={styles.typingText}>{loadingText}</p>
+            </div>
+        )
+    } else return null
 }
 export default Loading

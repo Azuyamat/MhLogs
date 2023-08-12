@@ -219,6 +219,7 @@
     padding:10px 20px;
     border-radius: 10px;
     color:var(--text);
+    cursor: pointer;
 }
 .share span{
     padding-top: 5px;

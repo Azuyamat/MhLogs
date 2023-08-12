@@ -12,13 +12,12 @@ import Arrow from "@/components/Arrow"
 import Container from "@/components/Container";
 import { useUser } from '@clerk/nextjs'
 import Share from "@/components/Share";
-import Link from "next/link";
+import Loading from "@/components/Loading"
 
 // Small disclaimer:
 // The file is quite bulky and could probably be seperated a tad bit better within numerous other components. The reason it is all handled in one file (or a few more) is to guide its simplicity
 
-let construction = [];
-let errConstruction = [];
+
 let serverInfo =
     {
         "errors": 0,
@@ -27,12 +26,13 @@ let serverInfo =
         "longVer": ""
     }
 
+
 function LogsArea(props) {
 
     const { isLoaded, isSignedIn, user } = useUser()
 
 
-    const [logs, setLogs] = useState(<div> </div>)
+    const [logs, setLogs] = useState("")
     const [errorCount, setErrorCount] = useState(0)
     const [lineCount, setLineCount] = useState(1)
     const [serverVersion, setServerVersion] = useState(null)
@@ -42,9 +42,11 @@ function LogsArea(props) {
     const [pluginList, setPluginList] = useState([]);
     const [shareLink, setShareLink] = useState("");
     const [shareShown, setShareShown] = useState(false);
+    const [construction, setConstruction] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const locked = props.locked ? props.locked : false
-    let content = props.content ? props.content : logs.props.children
+    let content = props.content ? props.content : logs
     const sharedBy = props.sharedBy
 
     if (!isLoaded){
@@ -54,39 +56,157 @@ function LogsArea(props) {
     }
 
     //Analyze server logs or (see below) reset the analysis
-    function analyze(text) {
-        construction = [];
-        errConstruction = [];
-        resetAnalysis()
-        setTimeout(() => {
-            setLogs(<div>{text}</div>)
-        }, 100)
-        showToast("Analyzing log file")
 
+    function preAnalyze(text){
+        setLoading(true)
+        resetAnalysis(true)
+        setTimeout(() => {
+            analyze(text)
+        }, 1)
+    }
+    function analyze(text){
+        const construction = [];
+        const errConstruction = [];
+        showToast("Analyzing log file")
         const regex = /\[Server thread\/INFO]: \[([^\]]+)] Loading server plugin (\S+)/g;
         const plugins = [];
         let matches;
-        let lineNumber = 1;
-
         while ((matches = regex.exec(text)) !== null) {
             const plugin = {
-                name: matches[2],
-                line: lineNumber
+                name: matches[2]
             }
             plugins.push(plugin);
-            lineNumber++
         }
         setPluginList(plugins)
+
+        let ip_regex = /(\w+|\d+|\D)([[]\/\d{0,3}.\d{0,3}.\d{0,3}.\d{0,3}:\d{0,7}])/gm
+        const newText = text.replace(ip_regex, "REDACTED IP")
+        const split = newText.split("\n");
+
+        let er = 0; //Number of errors
+        let i = 0; //Increment
+
+        if (text === "text") return //Basically, if no logs are inputted yet (Default log text is "text")
+
+        //Loop through every line of the log file
+        for (let s in split) {
+            const t = split[s] //Line content
+            let time = ""
+            const array = t.match(new RegExp("(?<time>^[[]\\d\\d:\\d\\d:\\d\\d])(?<text>.+)", "gm")) //Regex to match the time (Usual format: [08:50:00])
+
+            //If the regex match is unsuccessful and the line doesn't already exist, it is appended to the output result
+            try{
+                if (!array && document.getElementById("line_" + (parseInt(s) + 1)) === null) {
+                    construction.push(
+                        <Result
+                            key={randomInt(0, 999999999999)}
+                            line={parseInt(s) + 1}
+                            text={time}
+                            type={"INFO"}
+                            time={time}
+                        >{t}</Result>
+                    )
+                }
+            } catch (e){
+                continue
+            }
+
+
+            for (let a in array) { //Loop all matches in regex array
+                time = array[a].match(new RegExp("[[]\\d\\d:\\d\\d:\\d\\d]"))[0]
+
+                let content = array[a].replace(time, "") //Content w/o time Ex: [ServerMain/INFO]: Building unoptimized
+                const r = content.match(new RegExp("[[](?<type>.*?)\\/(?<infoType>\\w+)]")) //Regex to match [ServerMain/INFO]
+                let type = "INFO" //Default type is INFO, other types include [ERROR, FATAL, WARN, INFO]
+                if (r.groups.infoType != null) {
+                    type = r.groups.infoType
+                }
+
+                //Possible server error fixes
+                //TODO Add JSON file instead of using variable like this
+                let things = {
+                    "ModernPluginLoadingStrategy": "An error is occurring with the plugin mentioned above. Either try to fix it or switch to another plugin",
+                    "Could not pass event": "This means an event in the plugin above is not being registered properly. The plugin might unload due to this. Hence, you won't be able to use it. To resolve this issue, install a more up to date version of the plugin or one that doesn't have the same issue.",
+                }
+
+                let reason = "No suggested fixes"; //Default reason
+
+                //Catching server version
+                if (content.includes("Starting minecraft server version")) {
+                    serverInfo.version = content.match("Starting minecraft server version (.+)")[1]
+                }
+
+                //Catching long server version
+                if (content.includes("This server is running")) {
+                    serverInfo.longVer = content.match("This server is running (.+)")[1]
+                    //document.getElementById("longVersion").innerText = longVer;
+                }
+
+                //Additional error management
+                if (type === "ERROR") {
+                    er++
+                    for (const h in things) {
+                        if (content.includes(h)) reason = things[h]
+                    }
+                }
+
+                //Appending line to output result
+                try{
+                    if (document.getElementById("line_" + (parseInt(s) + 1)) !== null) continue;
+                    else {
+                        construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time}
+                                                  type={type.replace("FATAL", "ERROR").replace("DEBUG", "INFO").replace("TRACE", "TRACE")}
+                                                  time={time} reason={reason}>{content}</Result>)
+                        if (type.toLowerCase().replace("FATAL", "error") === "error") {
+                            errConstruction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time}
+                                                         type={type.replace("FATAL", "ERROR")} err={true} time={time}
+                                                         reason={reason}>{content}</Result>)
+                        }
+                    }
+                }
+                catch(e){
+                    return e;
+                }
+            }
+            i = s
+        }
+        //Validate construction
+        const ce = construction.map((result, _) => {
+            if (React.isValidElement(result)) {
+                return result;
+            }
+            return null;
+        });
+
+        setLogs(newText)
+        setErrorCount(er)
+        setLineCount(parseInt(i) + 1)
+        setServerVersion(serverInfo.version)
+        setServerLongVersion(serverInfo.longVer)
+        setErrorConstruction(errConstruction)
+        setConstruction(ce)
+        showToast("Analyzed server logs")
+        setLoading(false)
+
+        //Changing document title
+        try{
+            if (text !== "text") {
+                document.title = "" + serverInfo.version + " " + serverInfo.longVer + " Minecraft Server - MHLOGS"
+            }
+        }catch(e){}
+        if (serverInfo.lines === 1) return; //Return if no log was inputted
     }
+
     function resetAnalysis(withTextArea = false) {
         setErrorCount(0)
         setLineCount(1)
         setServerVersion("")
         setServerLongVersion("")
         setErrorConstruction(<div>None yet</div>)
-        setLogs(<div>text</div>)
+        setLogs("")
         setPluginList([])
         setShareLink("")
+        setConstruction([])
         if (withTextArea) document.getElementById("logsArea").value = ""
     }
 
@@ -106,7 +226,7 @@ function LogsArea(props) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const text = e.target.result
-                analyze(text)
+                preAnalyze(text)
                 document.getElementById("logsArea").value = text
             };
             reader.readAsText(file);
@@ -118,9 +238,10 @@ function LogsArea(props) {
     return (
         <>
             <Arrow/>
+            <Loading loading={loading}/>
             {shareShown &&
                 <Share
-                    logs={logs.props.children}
+                    logs={logs}
                     onClose={() => setShareShown(false)}
                     createShareLink={(link) => setShareLink(link)}
                 />}
@@ -170,7 +291,7 @@ function LogsArea(props) {
                         <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
                             " logs here or drop file"} className={styles.logsArea} onBlur={() => {
                             //document.getElementById("pro_btn").style.display = 'inherit'
-                            analyze(document.getElementById("logsArea").value)
+                            preAnalyze(document.getElementById("logsArea").value)
                         }} spellCheck={false} autoComplete={"off"} defaultValue={content} disabled={locked}/>
                     </div>
                 </Container>
@@ -178,7 +299,7 @@ function LogsArea(props) {
                 {/*Context buttons list*/}
                 <ul className={styles.list}>
                     <li><button onClick={() => {
-                        analyze(content === "" ? document.getElementById("logsArea").value : content)
+                        preAnalyze(content === "" ? document.getElementById("logsArea").value : content)
                     }} className={styles.share} data-color="green">Analyze log file <span><FaPlay/></span></button></li>
                     {(!locked && lineCount > 1) &&
                         <li><button className={styles.share} onClick={() => {
@@ -275,15 +396,7 @@ function LogsArea(props) {
                     </h2>
                     {lineCount === 1 && <div className={styles.basic}>Analyzed logs will appear here</div>}
                     <div>
-                        <Results logs={logs} id={"jeff"}
-                                 onResultsData={({errors, lines, version, longVer, errConstruction}) => {
-                                     setErrorCount(errors)
-                                     setLineCount(lines)
-                                     setServerVersion(version)
-                                     setServerLongVersion(longVer)
-                                     setErrorConstruction(errConstruction)
-                                     showToast("Logs analyzed")
-                                 }}/>
+                        <Results construction={construction}/>
                     </div>
                 </Container>
             </div>
@@ -294,132 +407,8 @@ function LogsArea(props) {
 }
 
 function Results(props) {
-
-    //Fetching log text and splitting per line
-    const text = props.logs.props.children
-    const split = text.split("\n");
-
-    let er = 0; //Number of errors
-    let i = 0; //Increment
-
-    if (text === "text") return //Basically, if no logs are inputted yet (Default log text is "text")
-
-    //Loop through every line of the log file
-    for (let s in split) {
-        const t = split[s] //Line content
-        let time = ""
-        const array = t.match(new RegExp("(?<time>^[[]\\d\\d:\\d\\d:\\d\\d])(?<text>.+)", "gm")) //Regex to match the time (Usual format: [08:50:00])
-
-        //If the regex match is unsuccessful and the line doesn't already exist, it is appended to the output result
-        try{
-            if (!array && document.getElementById("line_" + (parseInt(s) + 1)) === null) {
-                construction.push(
-                    <Result
-                        key={randomInt(0, 999999999999)}
-                        line={parseInt(s) + 1}
-                        text={time}
-                        type={"INFO"}
-                        time={time}
-                    >{t}</Result>
-                )
-            }
-        } catch (e){
-            continue
-        }
-
-
-        for (let a in array) { //Loop all matches in regex array
-            time = array[a].match(new RegExp("[[]\\d\\d:\\d\\d:\\d\\d]"))[0]
-
-            let content = array[a].replace(time, "") //Content w/o time Ex: [ServerMain/INFO]: Building unoptimized
-            const r = content.match(new RegExp("[[](?<type>.*?)\\/(?<infoType>\\w+)]")) //Regex to match [ServerMain/INFO]
-            let type = "INFO" //Default type is INFO, other types include [ERROR, FATAL, WARN, INFO]
-            if (r.groups.infoType != null) {
-                type = r.groups.infoType
-            }
-
-            //Possible server error fixes
-            //TODO Add JSON file instead of using variable like this
-            let things = {
-                "ModernPluginLoadingStrategy": "An error is occurring with the plugin mentioned above. Either try to fix it or switch to another plugin",
-                "Could not pass event": "This means an event in the plugin above is not being registered properly. The plugin might unload due to this. Hence, you won't be able to use it. To resolve this issue, install a more up to date version of the plugin or one that doesn't have the same issue.",
-            }
-
-            let reason = "No suggested fixes"; //Default reason
-
-            //Catching server version
-            if (content.includes("Starting minecraft server version")) {
-                serverInfo.version = content.match("Starting minecraft server version (.+)")[1]
-            }
-
-            //Catching long server version
-            if (content.includes("This server is running")) {
-                serverInfo.longVer = content.match("This server is running (.+)")[1]
-                //document.getElementById("longVersion").innerText = longVer;
-            }
-
-            //Masking IPs
-            let regex = /(\w+|\d+|\D)([[]\/\d{0,3}.\d{0,3}.\d{0,3}.\d{0,3}:\d{0,7}])/gm
-            content = content.replace(regex, "REDACTED IP")
-
-            //Additional error management
-            if (type === "ERROR") {
-                er++
-                for (const h in things) {
-                    if (content.includes(h)) reason = things[h]
-                }
-            }
-
-            //Appending line to output result
-            try{
-                if (document.getElementById("line_" + (parseInt(s) + 1)) !== null) continue;
-                else {
-                    construction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time}
-                                              type={type.replace("FATAL", "ERROR").replace("DEBUG", "INFO").replace("TRACE", "TRACE")}
-                                              time={time} reason={reason}>{content}</Result>)
-                    if (type.toLowerCase().replace("FATAL", "error") === "error") {
-                        errConstruction.push(<Result key={randomInt(0, 999999999999)} line={parseInt(s) + 1} text={time}
-                                                     type={type.replace("FATAL", "ERROR")} err={true} time={time}
-                                                     reason={reason}>{content}</Result>)
-                    }
-                }
-            }
-            catch(e){
-                return e;
-            }
-        }
-        i = s
-    }
-
-    serverInfo.lines = (parseInt(i) + 1)
-    serverInfo.errors = er
-    props.onResultsData({
-        errors: er,
-        lines: parseInt(i) + 1,
-        version: serverInfo.version,
-        longVer: serverInfo.longVer,
-        errConstruction: errConstruction
-    });
-
-    //Changing document title
-    try{
-        if (text !== "text") {
-            document.title = "" + serverInfo.version + " " + serverInfo.longVer + " Minecraft Server - MHLOGS"
-        }
-    }catch(e){}
-    if (serverInfo.lines === 1) return; //Return if no log was inputted
-
-    //Validate construction
-    const ce = construction.map((result, _) => {
-        if (React.isValidElement(result)) {
-            return result;
-        }
-        return null;
-    });
-
-    //Alas, construction is returned
     return (
-        <div className={styles.construction}>{ce}</div>
+        <div className={styles.construction}>{props.construction}</div>
     )
 }
 

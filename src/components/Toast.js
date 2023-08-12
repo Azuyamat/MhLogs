@@ -77,15 +77,15 @@ export function showToast(message,type="NORMAL",duration = 10000, id=Date.now().
     toastElement.id = "toast_" + toastId;
     toastRoot.appendChild(toastElement);
 
-    ReactDOM.render(
+    const root = ReactDOM.createRoot(toastElement);
+    root.render(
         <Toast
             message={message}
             duration={duration}
-            onClose={handleClose}
+            onClose={() => handleClose(toastId)}
             key={toastId}
             type={type}
-        />,
-        toastElement
+        />
     );
 }
 
