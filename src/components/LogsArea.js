@@ -300,27 +300,27 @@ function LogsArea(props) {
                 <ul className={styles.list}>
                     <li><button onClick={() => {
                         preAnalyze(content === "" ? document.getElementById("logsArea").value : content)
-                    }} className={styles.share} data-color="green">Analyze log file <span><FaPlay/></span></button></li>
+                    }} className={styles.share} data-color="green"><p>Analyze log file </p><span><FaPlay/></span></button></li>
                     {(!locked && lineCount > 1) &&
                         <li><button className={styles.share} onClick={() => {
                             setShareShown(true)
-                        }}>Share Logs <span><FaShare/></span></button></li>}
+                        }}><p>Share Logs </p><span><FaShare/></span></button></li>}
                     {(lineCount !== 1 && !locked) &&
                     <li>
                         <button className={styles.share} data-color={'red'} onClick={() => {
                             resetAnalysis(true)
-                        }}>Reset <span><FaTrash/></span></button>
+                        }}><p>Reset </p><span><FaTrash/></span></button>
                     </li>
                     }
                     {(shareLink !== "") &&
                     <li>
-                        <a href={shareLink} className={styles.share}>Click here to view share link</a>
+                        <a href={shareLink} className={styles.share}><p>Click here to view share link</p></a>
                     </li>}
                     {(shareLink !== "") &&
                         <li>
                             <button className={styles.share} onClick={() => {
                                 copyToClipboard(shareLink)
-                            }}>Copy share link<span><FaCopy/></span></button>
+                            }}><p>Copy share link </p><span><FaCopy/></span></button>
                         </li>}
                     {(user?.id === props.userId) &&
                         <li>
@@ -348,7 +348,7 @@ function LogsArea(props) {
                                     }
                                 }}
                             >
-                                Delete share<span><FaTrash/></span>
+                                <p>Delete share </p><span><FaTrash/></span>
                             </button>
                         </li>
                     }
