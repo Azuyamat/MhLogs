@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import styles from '@/styles/components/Color.module.css';
 import {AiOutlineBgColors} from "react-icons/ai";
 import {showToast} from "@/components/Toast";
-import {IoIosCheckmarkCircle} from "react-icons/Io";
+import {FaCheck} from "react-icons/fa";
 
 const Color = () => {
     const [selectedColor, setSelectedColor] = useState('');
@@ -59,7 +59,7 @@ const Color = () => {
         return (
             <>
                 <button style={{background:props.color}} data-selected={selectedColor === props.color ? "true" : "false"} className={styles.block} onClick={() => handleColorChange(props.color)}>{(selectedColor === props.color) &&
-                    <div className={styles.icon}><IoIosCheckmarkCircle/></div>}</button>
+                    <div className={styles.icon}><FaCheck/></div>}</button>
             </>
         )
     }
