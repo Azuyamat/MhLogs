@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import styles from '@/styles/components/Color.module.css';
 import {AiOutlineBgColors} from "react-icons/ai";
 import {showToast} from "@/components/Toast";
+import {IoIosCheckmarkCircle} from "react-icons/Io";
 
 const Color = () => {
     const [selectedColor, setSelectedColor] = useState('');
@@ -40,7 +41,7 @@ const Color = () => {
             {isOpen && (
                 <div className={styles.overlay}>
                     <div className={styles.colorPickerContainer}>
-                        <h1>What is your favorite color?</h1>
+                        <h1 className={styles.title}>What is your favorite color?</h1>
                         <div className={styles.colorPicker}>
                             {uniqueColors.map((color, index) => (
                                 <ColorBlock key={index} color={color} />
@@ -56,7 +57,10 @@ const Color = () => {
     function ColorBlock(props){
 
         return (
-            <button style={{background:props.color, border:'gray solid '+(props.color === selectedColor ? "2px" :"0px")}} className={styles.block} onClick={() => handleColorChange(props.color)}/>
+            <>
+                <button style={{background:props.color}} data-selected={selectedColor === props.color ? "true" : "false"} className={styles.block} onClick={() => handleColorChange(props.color)}>{(selectedColor === props.color) &&
+                    <div className={styles.icon}><IoIosCheckmarkCircle/></div>}</button>
+            </>
         )
     }
 };

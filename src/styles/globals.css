@@ -5,7 +5,7 @@
 :root {
   --text: white;
   --secondary-background: rgb(17, 17, 17);
-  --background: white;
+  --background: #262626;
   --tertiary-background: #051242;
   --pm: 87, 116, 211;
   --primary: rgb(30, 144, 255);
@@ -15,7 +15,6 @@
   font-family: Roboto, serif;
   margin: 0;
   padding: 0;
-  background: var(--background);
 }
 
 /*@media (prefers-color-scheme: dark) {}*/
@@ -23,7 +22,7 @@
 body{
   animation: g 5s ease infinite;
   animation-timing-function: linear;
-  background: #2d2d2d;
+  background: var(--background);
   min-height:100vh;
   max-height: 100%;
 }
@@ -47,17 +46,14 @@ button{
 
 h2{
   color:var(--primary);
-  position: sticky;
-  bottom:0;
   font-weight: bold;
   font-size: 20px;
   background: var(--secondary-background);
   padding:5px 20px;
   border-radius: 10px 10px 0 0;
-  box-shadow: 2px 2px 12px black;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);
   display: flex;
   width: 100%;
-  z-index: 1;
 
   backdrop-filter: blur(10px);
 }
@@ -80,7 +76,7 @@ a{
 }
 
 .title{
-  background: rgba(5, 18, 66, 0.08);
+  background: rgba(0, 0, 0, 0.6);
   width: fit-content;
   position: fixed;
   right:30px;
@@ -93,6 +89,7 @@ a{
   font-family: "Russo One", serif;
   font-size: 30px;
   border-radius: 0 0 10px 10px;
+  box-shadow: 2px 2px 12px black;
 
   display: flex;
   flex-wrap: wrap;

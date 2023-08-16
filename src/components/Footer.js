@@ -1,8 +1,5 @@
 import styles from '@/styles/components/Footer.module.css'
-import {AiFillGithub, AiFillRedditCircle, AiFillYoutube} from "react-icons/ai";
-import {BsSpotify, BsTwitch, BsSteam} from "react-icons/bs"
-import {TbBrandFiverr, TbBrandNextjs} from "react-icons/tb"
-import {IoLogoVercel} from "react-icons/io5";
+import {AiFillGithub} from "react-icons/ai";
 import Link from "next/link";
 
 function Footer(){

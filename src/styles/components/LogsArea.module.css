@@ -5,7 +5,9 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding-top: 100px;
+    min-height: 100vh;
+    gap:20px;
+    padding: 100px 0;
 }
 .textAreaCtn{
     width: 100%;
@@ -16,10 +18,13 @@
     color:var(--primary);
     width: calc(100% - 40px);
     padding:20px;
-    height: 10vh;
+    height: 200px;
     border-radius: 0 0 10px 10px;
     white-space: pre-wrap;
     font-family: Consolas, serif;
+}
+.logsArea:empty{
+    height: 90vh;
 }
 .logsArea:focus{
     height: 50vh;
@@ -124,7 +129,6 @@
     width: 100%;
     background: var(--secondary-background);
     padding:30px;
-    border-radius: 0 0 10px 10px;
     z-index: 31;
 }
 
@@ -240,25 +244,18 @@
     display: flex;
     flex-wrap: wrap;
     width: fit-content;
-    border-radius: 10px 10px 0 0;
+    border-radius: 10px;
     justify-content: center;
     gap: 10px;
     padding: 20px;
 
     position: fixed;
-    bottom: 0;
+    bottom: 10px;
     z-index: 40;
     background: rgba(31, 31, 31, 0.33);
     backdrop-filter: blur(10px);
     box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.46);
     margin: 20px 20px 0;
-    border-bottom: 3px solid var(--primary);
-}
-.wrapper:hover .list{
-    bottom: 10px;
-    transition: 500ms ease-in-out bottom, 500ms ease-in-out border-radius, 200ms ease-in-out border-bottom-width;
-    border-radius: 10px;
-    border-bottom: 0 solid var(--primary);
 }
 .list:not(:hover) button p{
     display: none;

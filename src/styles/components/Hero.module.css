@@ -1,0 +1,62 @@
+.wrapper{
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+    width: 100vw;
+
+    justify-content: center;
+    align-items: center;
+    padding: 20px 100px;
+
+    -webkit-animation: g 15s ease infinite;
+    -moz-animation: g 15s ease infinite;
+    animation: g 5s ease infinite;
+    animation-timing-function: linear;
+
+    background: linear-gradient(45deg, var(--primary) 0%, white 100%) 400% 400%;
+
+    gap: 10px;
+
+    box-shadow: 2px 2px 12px black;
+}
+
+.title{
+    font-weight: bold;
+    font-family: "Russo One", serif;
+    font-size: 500%;
+    color: var(--primary);
+    text-shadow: 2px 0 22px rgba(0, 0, 0, 0.77);
+}
+.subtitle{
+    font-style: italic;
+    color: #ffffff;
+    font-size: 120%;
+    text-align: center;
+}
+.partner, .signIn{
+    all:unset;
+    color:var(--primary);
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.64);
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-top: 10px;
+    box-shadow: 2px 2px 12px black;
+    border: solid 2px var(--primary);
+    cursor: pointer;
+    text-align: center;
+}
+
+
+@keyframes g {
+    0% {
+        background-size: 400% 400%;
+    }
+    50% {
+        background-size: 800% 400%;
+    }
+    100% {
+        background-size: 400% 400%;
+    }
+}

@@ -42,7 +42,7 @@ function LogsArea(props) {
     const [pluginList, setPluginList] = useState([]);
     const [shareLink, setShareLink] = useState("");
     const [shareShown, setShareShown] = useState(false);
-    const [construction, setConstruction] = useState([]);
+    const [construction, setConstruction] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const locked = props.locked ? props.locked : false
@@ -59,7 +59,7 @@ function LogsArea(props) {
 
     function preAnalyze(text){
         setLoading(true)
-        resetAnalysis(true)
+        resetAnalysis(false)
         setTimeout(() => {
             analyze(text)
         }, 1)
@@ -206,7 +206,7 @@ function LogsArea(props) {
         setLogs("")
         setPluginList([])
         setShareLink("")
-        setConstruction([])
+        setConstruction(null)
         if (withTextArea) document.getElementById("logsArea").value = ""
     }
 
@@ -248,54 +248,6 @@ function LogsArea(props) {
 
             <div className={styles.wrapper} id={"wrapper"} onDrop={handleDrop}>
 
-                {/*Shared by area*/}
-                {locked &&
-                    <Container>
-                        <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> These logs have been shared</h2>
-                        <div className={styles.serverInfo}>
-                            <ul>
-                                <li>Shared by: <span className={styles.highlight}>@{sharedBy} ({props.userId})</span></li>
-                            </ul>
-                        </div>
-                    </Container>
-                }
-
-                {/*Upload file area*/}
-                {!locked &&
-                    <Container>
-                        <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Upload Log File or Drop It</h2>
-                        <div className={styles.customFileInput}>
-                            <label htmlFor="fileInput" className={styles.labelCtn}>
-                                <p>Choose File</p>
-                                <span className={styles.arrow}><AiOutlineArrowDown/></span>
-                            </label>
-                            <input
-                                type="file"
-                                id="fileInput"
-                                accept=".log, .txt"
-                                onChange={handleFileChange}
-                            />
-                            {selectedFile &&
-                                <span className={styles.selectedFileLabel}>{selectedFile.name}</span>}
-                            {!selectedFile &&
-                                <div className={styles.dropAnywhere} onClick={() => {
-                                    document.getElementById("logsArea").scrollIntoView({block:'center', behavior:'smooth'})
-                                }}>Drop file in text area</div>}
-                        </div>
-                    </Container>}
-
-                {/*Log pasting text area*/}
-                <Container id={"logsA"}>
-                    {locked ? <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Logs</h2> : <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Paste your logs below</h2>}
-                    <div className={styles.textAreaCtn}>
-                        <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
-                            " logs here or drop file"} className={styles.logsArea} onBlur={() => {
-                            //document.getElementById("pro_btn").style.display = 'inherit'
-                            preAnalyze(document.getElementById("logsArea").value)
-                        }} spellCheck={false} autoComplete={"off"} defaultValue={content} disabled={locked}/>
-                    </div>
-                </Container>
-
                 {/*Context buttons list*/}
                 <ul className={styles.list}>
                     <li><button onClick={() => {
@@ -306,23 +258,23 @@ function LogsArea(props) {
                             setShareShown(true)
                         }}><p>Share Logs </p><span><FaShare/></span></button></li>}
                     {(lineCount !== 1 && !locked) &&
-                    <li>
-                        <button className={styles.share} data-color={'red'} onClick={() => {
-                            resetAnalysis(true)
-                        }}><p>Reset </p><span><FaTrash/></span></button>
-                    </li>
+                        <li>
+                            <button className={styles.share} data-color={'red'} onClick={() => {
+                                resetAnalysis(true)
+                            }}><p>Reset </p><span><FaTrash/></span></button>
+                        </li>
                     }
                     {(shareLink !== "") &&
-                    <li>
-                        <a href={shareLink} className={styles.share}><p>Click here to view share link</p></a>
-                    </li>}
+                        <li>
+                            <a href={shareLink} className={styles.share}><p>Click here to view share link</p></a>
+                        </li>}
                     {(shareLink !== "") &&
                         <li>
                             <button className={styles.share} onClick={() => {
                                 copyToClipboard(shareLink)
                             }}><p>Copy share link </p><span><FaCopy/></span></button>
                         </li>}
-                    {(user?.id === props.userId) &&
+                    {(user?.id === props.userId && user?.id !== undefined) &&
                         <li>
                             <button
                                 className={styles.share}
@@ -353,6 +305,48 @@ function LogsArea(props) {
                         </li>
                     }
                 </ul>
+
+                {/*Shared by area*/}
+                {locked &&
+                    <Container>
+                        <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> These logs have been shared</h2>
+                        <div className={styles.serverInfo}>
+                            <ul>
+                                <li>Shared by: <span className={styles.highlight}>@{sharedBy} ({props.userId})</span></li>
+                            </ul>
+                        </div>
+                    </Container>
+                }
+
+                {!locked &&
+                    <Container>
+                        <h2><span className={styles.icon}><AiOutlineAlignLeft/></span> Upload, copy or drop a .txt or .log file</h2>
+                        <div className={styles.customFileInput}>
+                            <label htmlFor="fileInput" className={styles.labelCtn}>
+                                <p>Choose File</p>
+                                <span className={styles.arrow}><AiOutlineArrowDown/></span>
+                            </label>
+                            <input
+                                type="file"
+                                id="fileInput"
+                                accept=".log, .txt"
+                                onChange={handleFileChange}
+                            />
+                            {selectedFile &&
+                                <span className={styles.selectedFileLabel}>{selectedFile.name}</span>}
+                            {!selectedFile &&
+                                <div className={styles.dropAnywhere} onClick={() => {
+                                    document.getElementById("logsArea").scrollIntoView({block:'center', behavior:'smooth'})
+                                }}>Drop file in text area below</div>}
+                        </div>
+                        <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
+                            " logs here or drop file"} className={styles.logsArea} onBlur={() => {
+                            //document.getElementById("pro_btn").style.display = 'inherit'
+                            preAnalyze(document.getElementById("logsArea").value)
+                        }} onPaste={() => {
+                            preAnalyze(document.getElementById("logsArea").value)
+                        }} spellCheck={false} autoComplete={"off"} defaultValue={content} disabled={locked}/>
+                    </Container>}
 
                 {/*Server information container*/}
                 {lineCount !== 1 &&
@@ -389,16 +383,15 @@ function LogsArea(props) {
                 }
 
                 {/*Output logs*/}
-                <Container>
+                {construction !== null && <Container>
                     <h2>
                         <span className={styles.icon}><AiFillWarning/></span>
                         {serverInfo.version} {serverInfo.longVer} Minecraft Server
                     </h2>
-                    {lineCount === 1 && <div className={styles.basic}>Analyzed logs will appear here</div>}
                     <div>
                         <Results construction={construction}/>
                     </div>
-                </Container>
+                </Container>}
             </div>
         </>
 
