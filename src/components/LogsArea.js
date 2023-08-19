@@ -40,7 +40,7 @@ function LogsArea(props) {
     const [errorConstruction, setErrorConstruction] = useState(<div>None yet</div>)
     const [selectedFile, setSelectedFile] = useState(null);
     const [pluginList, setPluginList] = useState([]);
-    const [shareLink, setShareLink] = useState(null);
+    const [shareLink, setShareLink] = useState("");
     const [shareShown, setShareShown] = useState(false);
     const [construction, setConstruction] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -56,9 +56,11 @@ function LogsArea(props) {
     const a = useCallback((text) => {
         setLoading(true)
         resetAnalysis(false)
-        setTimeout(() => {
-            analyze(text)
-        }, 1)
+        if (text.length > 0){
+            setTimeout(() => {
+                analyze(text)
+            }, 1)
+        }
     }, [])
     useEffect(() => {
         if (!loaded){

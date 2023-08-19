@@ -58,9 +58,11 @@ export async function getLogContent(timestamp){
 
 export default async function handler(req, res) {
 
+  console.log("Nerd")
+
   if (req.method === 'GET'){
     try {
-      const { timestamp } = req.query;
+      const { timestamp } = req.body;
       return getLogContent(timestamp)
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -68,6 +70,8 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST'){
     try {
+
+      console.log("Call")
       // Parse request body
       const { content, username, userId } = req.body;
 
