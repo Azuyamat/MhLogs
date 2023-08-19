@@ -3,7 +3,7 @@
 
 
 import styles from "@/styles/components/LogsArea.module.css"
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {randomInt} from "next/dist/shared/lib/bloom-filter/utils";
 import {AiFillWarning, AiOutlineAlignLeft, AiOutlineArrowDown} from "react-icons/ai";
 import {FaCopy, FaPlay, FaServer, FaShare, FaTrash} from "react-icons/fa";
@@ -32,7 +32,7 @@ function LogsArea(props) {
     const { isLoaded, isSignedIn, user } = useUser()
 
 
-    const [logs, setLogs] = useState("")
+    const [logs, setLogs] = useState(props.content ? props.content : "")
     const [errorCount, setErrorCount] = useState(0)
     const [lineCount, setLineCount] = useState(1)
     const [serverVersion, setServerVersion] = useState(null)
@@ -44,10 +44,28 @@ function LogsArea(props) {
     const [shareShown, setShareShown] = useState(false);
     const [construction, setConstruction] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [loaded, setLoaded] = useState(false);
 
     const locked = props.locked ? props.locked : false
     let content = props.content ? props.content : logs
     const sharedBy = props.sharedBy
+
+
+
+
+    const a = useCallback((text) => {
+        setLoading(true)
+        resetAnalysis(false)
+        setTimeout(() => {
+            analyze(text)
+        }, 1)
+    }, [])
+    useEffect(() => {
+        if (!loaded){
+            setLoaded(true);
+            a(content)
+        }
+    }, [a, content, loaded]);
 
     if (!isLoaded){
         return (
@@ -55,15 +73,8 @@ function LogsArea(props) {
         )
     }
 
-    //Analyze server logs or (see below) reset the analysis
 
-    function preAnalyze(text){
-        setLoading(true)
-        resetAnalysis(false)
-        setTimeout(() => {
-            analyze(text)
-        }, 1)
-    }
+    //Analyze server logs or (see below) reset the analysis
     function analyze(text){
         const construction = [];
         const errConstruction = [];
@@ -226,7 +237,7 @@ function LogsArea(props) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const text = e.target.result
-                preAnalyze(text)
+                a(text)
                 document.getElementById("logsArea").value = text
             };
             reader.readAsText(file);
@@ -250,12 +261,10 @@ function LogsArea(props) {
 
                 {/*Context buttons list*/}
                 <ul className={styles.list}>
-                    <li><button onClick={() => {
-                        preAnalyze(content === "" ? document.getElementById("logsArea").value : content)
-                    }} className={styles.share} data-color="green"><p>Analyze log file </p><span><FaPlay/></span></button></li>
                     {(!locked && lineCount > 1) &&
                         <li><button className={styles.share} onClick={() => {
                             setShareShown(true)
+                            console.log(shareShown)
                         }}><p>Share Logs </p><span><FaShare/></span></button></li>}
                     {(lineCount !== 1 && !locked) &&
                         <li>
@@ -342,9 +351,9 @@ function LogsArea(props) {
                         <textarea name="logs" id={"logsArea"} cols="30" rows="10" placeholder={"Paste your" +
                             " logs here or drop file"} className={styles.logsArea} onBlur={() => {
                             //document.getElementById("pro_btn").style.display = 'inherit'
-                            preAnalyze(document.getElementById("logsArea").value)
+                            a(document.getElementById("logsArea").value)
                         }} onPaste={() => {
-                            preAnalyze(document.getElementById("logsArea").value)
+                            a(document.getElementById("logsArea").value)
                         }} spellCheck={false} autoComplete={"off"} defaultValue={content} disabled={locked}/>
                     </Container>}
 

@@ -73,7 +73,7 @@ export default async function handler(req, res) {
 
       const timestamp = Date.now()
 
-      if (!timestamp || !content) {
+      if (!timestamp || !content || !username || !userId) {
         return res.status(400).json({ error: 'Missing required fields.' });
       }
 
