@@ -40,7 +40,7 @@ function LogsArea(props) {
     const [errorConstruction, setErrorConstruction] = useState(<div>None yet</div>)
     const [selectedFile, setSelectedFile] = useState(null);
     const [pluginList, setPluginList] = useState([]);
-    const [shareLink, setShareLink] = useState("");
+    const [shareLink, setShareLink] = useState(null);
     const [shareShown, setShareShown] = useState(false);
     const [construction, setConstruction] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -261,7 +261,7 @@ function LogsArea(props) {
 
                 {/*Context buttons list*/}
                 <ul className={styles.list}>
-                    {(!locked && lineCount > 1) &&
+                    {(!locked && lineCount > 1 && shareLink.length < 1) &&
                         <li><button className={styles.share} onClick={() => {
                             setShareShown(true)
                             console.log(shareShown)
@@ -273,11 +273,11 @@ function LogsArea(props) {
                             }}><p>Reset </p><span><FaTrash/></span></button>
                         </li>
                     }
-                    {(shareLink !== "") &&
+                    {(shareLink.length > 1) &&
                         <li>
                             <a href={shareLink} className={styles.share}><p>Click here to view share link</p></a>
                         </li>}
-                    {(shareLink !== "") &&
+                    {(shareLink.length > 1) &&
                         <li>
                             <button className={styles.share} onClick={() => {
                                 copyToClipboard(shareLink)
