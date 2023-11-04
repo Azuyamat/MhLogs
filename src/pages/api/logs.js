@@ -25,7 +25,7 @@ try {
     userId: String
   });
 
-  Log = mongoose.model('Log', logSchema, "log");
+  Log = mongoose.model('Log', logSchema, "logs");
 }
 
 export async function getLogContent(timestamp){
